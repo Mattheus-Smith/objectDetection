@@ -10,8 +10,16 @@ deactivate
 ##executar##
 
 	# yolov3
-./venvYolo/Scripts/python.exe detect.py --image ./data/meme.jpg		-> excutar para qq foto
-	
-./venvYolo/Scripts/python.exe detect_video.py --video 0			-> executar codigo com webcam
+-> excutar para qq foto
+./venvYolo/Scripts/python.exe detect.py --image ./data/meme.jpg		
+
+-> executar codigo com webcam	
+./venvYolo/Scripts/python.exe detect_video.py --video 0			
+
+-> ler video (ta dando erro)
+./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --weights ./checkpoints/yolov3.tf.index --tiny					
+
+-> ler video um video especifico. Tem saida. E usa a opcao 1 (desenhar a partir da cor da camisa)
+./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --output ./output.mp4 --opcao 1
 
 

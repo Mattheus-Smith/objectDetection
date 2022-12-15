@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow as tf
 import cv2
 
+from shapely.geometry import Point, Polygon
+
 YOLOV3_LAYER_LIST = [
     'yolo_darknet',
     'yolo_conv_0',
@@ -74,7 +76,6 @@ def load_darknet_weights(model, weights_file, tiny=False):
     assert len(wf.read()) == 0, 'failed to read all data'
     wf.close()
 
-
 def broadcast_iou(box_1, box_2):
     # box_1: (..., (x1, y1, x2, y2))
     # box_2: (N, (x1, y1, x2, y2))
@@ -98,7 +99,6 @@ def broadcast_iou(box_1, box_2):
         (box_2[..., 3] - box_2[..., 1])
     return int_area / (box_1_area + box_2_area - int_area)
 
-
 def draw_outputs_default(img, outputs, class_names):
     boxes, objectness, classes, nums = outputs
     boxes, objectness, classes, nums = boxes[0], objectness[0], classes[0], nums[0]
@@ -112,6 +112,104 @@ def draw_outputs_default(img, outputs, class_names):
             x1y1, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
     return img
 
+def draw_outputs_by_team(img, outputs, class_names):
+    boxes, objectness, classes, nums = outputs
+    boxes, objectness, classes, nums = boxes[0], objectness[0], classes[0], nums[0]
+    wh = np.flip(img.shape[0:2])
+    for i in range(nums):
+        x1y1 = tuple((np.array(boxes[i][0:2]) * wh).astype(np.int32))
+        x2y2 = tuple((np.array(boxes[i][2:4]) * wh).astype(np.int32))
+        if (class_names[int(classes[i])] == "person"):
+
+            roi = img[x1y1[1]: x2y2[1], x1y1[0]: x2y2[0]]
+
+            # Convert Image to Image HSV
+            hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+
+            lower_blue = np.array([90, 50, 50])
+            upper_blue = np.array([130, 255, 255])
+
+            lower_orange = np.array([5, 50, 50])
+            upper_orange = np.array([20, 255, 255])
+
+            maskBlue = cv2.inRange(hsv, lower_blue, upper_blue)
+            maskOrange = cv2.inRange(hsv, lower_orange, upper_orange)
+
+            # if (i==2):
+            # cv2.imwrite("C:\\Users\\Public\\teste2.jpg", roi)
+
+            # saida = "C:\\Users\\Public\\saida" + str(i) + ".jpg"
+            # cv2.imwrite(saida, roi)
+
+            # identificando jogador Azul
+            contours, hierarchy = cv2.findContours(maskBlue,
+                                                   cv2.RETR_TREE,
+                                                   cv2.CHAIN_APPROX_SIMPLE)
+
+            for pic, contour in enumerate(contours):
+                area = cv2.contourArea(contour)
+                if (area > 100 and area < 600):
+                    img = cv2.rectangle(img, x1y1, x2y2, (255, 0, 0), 2)
+
+            # identificando jogador Laranja
+            contours, hierarchy = cv2.findContours(maskOrange,
+                                                   cv2.RETR_TREE,
+                                                   cv2.CHAIN_APPROX_SIMPLE)
+
+            for pic, contour in enumerate(contours):
+                area = cv2.contourArea(contour)
+                if (area > 150 and area < 600):
+                    img = cv2.rectangle(img, x1y1, x2y2, (0, 128, 255), 2)
+
+            # img = cv2.rectangle(img, x1y1, x2y2, (255, 0, 0), 2)
+        # else:
+        #     img = cv2.rectangle(img, x1y1, x2y2, (0, 255, 0), 2)
+        #
+        # img = cv2.putText(img, '{} {:.4f}'.format(
+        #     class_names[int(classes[i])], objectness[i]),
+        #     x1y1, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 1)
+    return img
+
+
+points = np.array([[118, 571], [1485, 768],
+                [1916, 569], [862,487]],
+               np.int32)
+
+color = [255, 0, 255]   # MAGENTA
+thickness = 2
+radius = 2
+def draw_outputs_foot(img, outputs, class_names):
+    boxes, objectness, classes, nums = outputs
+    boxes, objectness, classes, nums = boxes[0], objectness[0], classes[0], nums[0]
+    wh = np.flip(img.shape[0:2])
+    for i in range(nums):
+        x1y1 = tuple((np.array(boxes[i][0:2]) * wh).astype(np.int32))
+        x2y2 = tuple((np.array(boxes[i][2:4]) * wh).astype(np.int32))
+
+        if (class_names[int(classes[i])] == "person"):
+            x1 = int(x1y1[0])
+            y1 = int(x1y1[1])
+
+            x2 = int(x2y2[0])
+            y2 = int(x2y2[1])
+
+            xc = x1 + int((x2 - x1) / 2)
+            player_pos = (xc, y2)
+
+            court = Polygon(points)
+
+            if Point(player_pos).within(court):
+                cv2.circle(img, player_pos, radius, color, thickness, lineType=8, shift=0)
+
+    return img
+
+def seletor_de_funcoes(img, outputs, class_names, opcao):
+    if(opcao == 0): #usar funcao draw_outputs_default
+        return draw_outputs_default(img, outputs, class_names)
+    if (opcao == 1):  # usar funcao draw_outputs_by_team
+        return draw_outputs_by_team(img, outputs, class_names)
+    if (opcao == 2):  # usar funcao draw_outputs_foot
+        return draw_outputs_foot(img, outputs, class_names)
 
 def draw_labels(x, y, class_names):
     img = x.numpy()
