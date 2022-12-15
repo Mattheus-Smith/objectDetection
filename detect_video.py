@@ -47,14 +47,13 @@ def main(_argv):
 
     out = None
 
-    #if FLAGS.output:
-    # by default VideoCapture returns float instead of int
-    # width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
-    # height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    # fps = int(vid.get(cv2.CAP_PROP_FPS))
-    # codec = cv2.VideoWriter_fourcc(*'XVID')
-    # out = cv2.VideoWriter('output.mp4', codec, fps, (width, height))
-    #out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
+    if FLAGS.output:
+        # by default VideoCapture returns float instead of int
+        width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = int(vid.get(cv2.CAP_PROP_FPS))
+        codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
+        out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
     while True:
         _, img = vid.read()
@@ -77,8 +76,8 @@ def main(_argv):
         img = draw_outputs(img, (boxes, scores, classes, nums), class_names)
         img = cv2.putText(img, "Time: {:.2f}ms".format(sum(times)/len(times)*1000), (0, 30),
                           cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
-        #if FLAGS.output:
-        #out.write(img)
+        if FLAGS.output:
+            out.write(img)
         cv2.imshow('output', img)
         if cv2.waitKey(1) == ord('q'):
             break

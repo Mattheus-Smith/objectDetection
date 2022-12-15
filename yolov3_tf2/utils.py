@@ -3,8 +3,6 @@ import numpy as np
 import tensorflow as tf
 import cv2
 
-from shapely.geometry import Point, Polygon
-
 YOLOV3_LAYER_LIST = [
     'yolo_darknet',
     'yolo_conv_0',
@@ -100,13 +98,6 @@ def broadcast_iou(box_1, box_2):
         (box_2[..., 3] - box_2[..., 1])
     return int_area / (box_1_area + box_2_area - int_area)
 
-points = np.array([[118, 571], [1485, 768],
-                [1916, 569], [862,487]],
-               np.int32)
-
-color = [255, 0, 255]   # BLUE
-thickness = 2
-radius = 2
 
 def draw_outputs(img, outputs, class_names):
     boxes, objectness, classes, nums = outputs
@@ -115,30 +106,10 @@ def draw_outputs(img, outputs, class_names):
     for i in range(nums):
         x1y1 = tuple((np.array(boxes[i][0:2]) * wh).astype(np.int32))
         x2y2 = tuple((np.array(boxes[i][2:4]) * wh).astype(np.int32))
-
-        # if(i==0):
-        #     print(x1y1)
-
-        if (class_names[int(classes[i])] == "person"):
-            x1 = int(x1y1[0])
-            y1 = int(x1y1[1])
-
-            x2 = int(x2y2[0])
-            y2 = int(x2y2[1])
-
-            xc = x1 + int((x2 - x1) / 2)
-            player_pos = (xc, y2)
-
-            court = Polygon(points)
-
-            if Point(player_pos).within(court):
-                cv2.circle(img, player_pos, radius, color, thickness, lineType=8, shift=0)
-
-        # img = cv2.rectangle(img, x1y1, x2y2, (255, 0, 0), 2)
-        # img = cv2.putText(img, '{} {:.4f}'.format(
-        #     class_names[int(classes[i])], objectness[i]),
-        #     x1y1, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
-
+        img = cv2.rectangle(img, x1y1, x2y2, (255, 0, 0), 2)
+        img = cv2.putText(img, '{} {:.4f}'.format(
+            class_names[int(classes[i])], objectness[i]),
+            x1y1, cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
     return img
 
 
