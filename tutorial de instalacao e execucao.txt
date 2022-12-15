@@ -1,0 +1,13 @@
+./venvYolo/Scripts/pip freeze > requeriments.txt
+
+##criando ambiente##
+virtualenv <nome do ambiente>
+source <nome do ambiente>/Scripts/activate
+deactivate
+
+##treinar##
+
+##executar##
+./venvYolo/Scripts/python.exe detect_video.py --video 0		-> executar codigo com webcam
+
+
