@@ -7,7 +7,7 @@ from yolov3_tf2.models import (
     YoloV3, YoloV3Tiny
 )
 from yolov3_tf2.dataset import transform_images
-from yolov3_tf2.utils import draw_outputs
+from yolov3_tf2.utils import draw_outputs_default
 
 
 flags.DEFINE_string('classes', './data/coco.names', 'path to classes file')
@@ -73,7 +73,7 @@ def main(_argv):
         times.append(t2-t1)
         times = times[-20:]
 
-        img = draw_outputs(img, (boxes, scores, classes, nums), class_names)
+        img = draw_outputs_default(img, (boxes, scores, classes, nums), class_names)
         img = cv2.putText(img, "Time: {:.2f}ms".format(sum(times)/len(times)*1000), (0, 30),
                           cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (0, 0, 255), 2)
         if FLAGS.output:

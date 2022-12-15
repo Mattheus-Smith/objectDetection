@@ -8,6 +8,10 @@ deactivate
 ##treinar##
 
 ##executar##
-./venvYolo/Scripts/python.exe detect_video.py --video 0		-> executar codigo com webcam
+
+	# yolov3
+./venvYolo/Scripts/python.exe detect.py --image ./data/meme.jpg		-> excutar para qq foto
+	
+./venvYolo/Scripts/python.exe detect_video.py --video 0			-> executar codigo com webcam
 
 
