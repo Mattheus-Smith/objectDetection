@@ -1,5 +1,5 @@
 # yolov3-tf2-darknet
-<p>Usar o YOLOv3 para fazer detecção de jogadores a partir de uma partida de futebol gravada.</p>
+<p>Usar o YOLOv3 para fazer detecção de jogadores a partir de uma partida de futebol gravada. (teste no navegador)</p>
 
 # Resumo
 <p>Esse projeto usa como referência o YOLOv3-Darknet disponibilizado em [REFE 1] para fazer a detecção dos jogadores. Além de um banco de dados contendo as coordenadas dos jogadores extraídas de um gps que os mesmos usaram durante a gravação das partidas.</p>
