@@ -1,7 +1,0 @@
-tensorflow==2.10.1
-opencv-python==4.1.1.26
-lxml
-tqdm
-protobuf == 3.19.0
-
--e .
