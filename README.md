@@ -1,5 +1,6 @@
 # yolov3-tf2-darknet
-<p>Usar o YOLOv3 para fazer detecção de jogadores a partir de uma partida de futebol gravada. (teste no navegador)</p>
+
+<p>Usar o YOLOv3 para fazer detecção de jogadores a partir de uma partida de futebol gravada.</p>
 
 # Resumo
 <p>Esse projeto usa como referência o YOLOv3-Darknet disponibilizado em [REFE 1] para fazer a detecção dos jogadores. Além de um banco de dados contendo as coordenadas dos jogadores extraídas de um gps que os mesmos usaram durante a gravação das partidas.</p>
@@ -17,7 +18,6 @@
 
 ```bash
 virtualenv <nome do ambiente>
-
 ```
 
 2.Ativar o Ambiente Virtual
@@ -45,4 +45,3 @@ deactivate
 -> ler video (ta dando erro) ./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --weights ./checkpoints/yolov3.tf.index --tiny
 
 -> ler video um video especifico com saida. E usa a opcao 1 (desenhar a partir da cor da camisa) ok ./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --output ./output.mp4 --opcao 1
-
