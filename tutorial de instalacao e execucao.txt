@@ -22,3 +22,6 @@ deactivate
 -> ler video um video especifico com saida. E usa a opcao 1 (desenhar a partir da cor da camisa)			ok
 ./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --output ./output.mp4 --opcao 1
 
+
+
+
