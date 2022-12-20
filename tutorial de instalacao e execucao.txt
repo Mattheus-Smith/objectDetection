@@ -1,9 +1,18 @@
 ./venvYolo/Scripts/pip freeze > requeriments.txt
 
+##versão do python##
+python 3.7. (8 ou 9)
+
+##instalar virtualenv##
+pip install virtualenv 
+
 ##criando ambiente##
 virtualenv <nome do ambiente>
 source <nome do ambiente>/Scripts/activate
 deactivate
+
+##instalar biblioteca##
+$ ./venvYolo/Scripts/pip install -r requeriments.txt
 
 ##treinar##
 
