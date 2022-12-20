@@ -11,22 +11,41 @@
 
 # Execução do Projeto
 <p>No github do [REFE 1] ele mostra como executar os arquivos. Mas irei fazer o meu proprio tutorial de como usar os algoritmos.</p>
+<p>O versão do python utilizado foi: 3.7.8 (com o pyasn1==0.4.8)<p> 
+<p>ou<p> 
+<p>O versão do python utilizado foi: 3.7.9 (com o pyasn1)<p> 
 
 # Instalação
-1. Criar um Ambiente Virtual
-<p>É usado a biblioteca "virtualenv" para criar o ambiente virtual. Mas vc pode usar o "conda" também.</p>
+1. Instalar a biblioteca "virtualenv"
+<p>Basta usar esse comando no seu terminal(eu usei o git bash). Ele vai usar o interpretador base do seu computador pra instalar</p>
+
+```bash
+pip install virtualenv 
+```
+
+2. Criar um Ambiente Virtual
+<p>É usando a biblioteca "virtualenv" para criar o ambiente virtual. Mas vc pode usar o "conda" também.</p>
 
 ```bash
 virtualenv <nome do ambiente>
 ```
 
-2.Ativar o Ambiente Virtual
+3.Ativar o Ambiente Virtual
 ```bash
 source <nome do ambiente>/Scripts/activate
 
 ```
 
-3.Desativar o Ambiente Virtual
+4.instalar as bibliotecas necessarias
+<p>Com o ambiente virtual ativado. você acessa a a pasta raiz desse projeto(c:/user/usuario/objectDetection) e executar esse comando abaixo
+
+```bash
+./venvYolo/Scripts/pip install -r requeriments.txt
+
+```
+
+5.Desativar o Ambiente Virtual
+<p>Apos terminar de usar o código desative o ambiente virtual, usando o codigo abaixo
 
 ```bash
 deactivate
