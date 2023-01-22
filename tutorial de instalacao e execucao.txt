@@ -20,13 +20,14 @@ $ ./venvYolo/Scripts/pip install -r requeriments.txt
 
 	# yolov3
 -> excutar para qq foto 												ok
-./venvYolo/Scripts/python.exe detect.py --image ./data/meme.jpg		
+./venvYolo/Scripts/python.exe detect.py --image ./data/feff.png --output ./output/imgFeff.png	
 
 -> executar codigo com webcam												ok
 ./venvYolo/Scripts/python.exe detect_video.py --video 0			
 
--> ler video (ta dando erro)
-./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --weights ./checkpoints/yolov3.tf.index --tiny					
+-> ler video
+./venvYolo/Scripts/python.exe detect_video.py --video ./data/icloud/IMG_0288.mp4 --output ./output/vdeo.mp4
+					
 
 -> ler video um video especifico com saida. E usa a opcao 1 (desenhar a partir da cor da camisa)			ok
 ./venvYolo/Scripts/python.exe detect_video.py --video ./data/video.mp4 --output ./output.mp4 --opcao 1
