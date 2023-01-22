@@ -8,6 +8,7 @@ from yolov3_tf2.models import (
 )
 from yolov3_tf2.dataset import transform_images
 from yolov3_tf2.utils import seletor_de_funcoes
+import datetime
 
 
 flags.DEFINE_string('classes', './data/coco.names', 'path to classes file')
@@ -18,7 +19,7 @@ flags.DEFINE_integer('size', 416, 'resize images to')
 flags.DEFINE_integer('opcao', 0, 'opcao da funcao detect_video')
 flags.DEFINE_string('video', './data/video.mp4',
                     'path to video file or number for webcam)')
-flags.DEFINE_string('output', None, 'path to output video')
+flags.DEFINE_string('output', None, './output/video.mp4')
 flags.DEFINE_string('output_format', 'mp4v', 'codec used in VideoWriter when saving video to file')
 flags.DEFINE_integer('num_classes', 80, 'number of classes in the model')
 
@@ -56,15 +57,25 @@ def main(_argv):
         codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
         out = cv2.VideoWriter(FLAGS.output, codec, fps, (width, height))
 
+
+    agora = datetime.datetime.now()
+    print(agora)
+
     while True:
         _, img = vid.read()
 
         if img is None:
             print("sem frame")
+
+            print(agora)
+            depois = datetime.datetime.now()
+            print(depois)
+            f = '%Y/%m/%d %H:%M:%S'
+            resultado = (datetime.datetime.strptime(depois, f) - datetime.datetime.strptime(agora, f)).total_seconds()
+            print("tempo de processamento: ",resultado)
             break
             # logging.warning("Empty Frame")
             # time.sleep(0.1)
-            # continue
 
         img_in = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_in = tf.expand_dims(img_in, 0)
