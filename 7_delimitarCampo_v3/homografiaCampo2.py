@@ -3,39 +3,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read source image.
-img_src = cv2.imread('campo_s20.png')
+img_src = cv2.imread('campo_A51.png')
 
-points = np.array([[1, 864], [1919, 858], #A1, C2
-                [1919, 658], [1716, 591], #C1, B2
-                [88, 595], [1, 635]], np.float32)  #B1, A2
+# Four corners of the 3D court + mid-court circle point in source image
+# Start top-left corner and go anti-clock wise + mid-court circle point
+pts_src = np.float32([[13, 341], [1011, 460], #A, B
+                [1819, 371], [820, 322]])  #C, D
 
 #encontrar a largura maxima
-width_B1B2 = np.sqrt(((points[4][0] - points[3][0]) ** 2) + ((points[4][1] - points[3][1]) ** 2))
-width_A1C2 = np.sqrt(((points[0][0] - points[1][0]) ** 2) + ((points[0][1] - points[1][1]) ** 2))
-maxWidth = max(int(width_B1B2), int(width_A1C2))
-print(maxWidth)
+width_AB = np.sqrt(((pts_src[0][0] - pts_src[1][0]) ** 2) + ((pts_src[0][1] - pts_src[1][1]) ** 2))
+width_DC = np.sqrt(((pts_src[3][0] - pts_src[2][0]) ** 2) + ((pts_src[3][1] - pts_src[2][1]) ** 2))
+maxWidth = max(int(width_AB), int(width_DC))
 
 #encontrar alttura maxima
-height_A1B1 = np.sqrt(((points[4][0] - points[0][0]) ** 2) + ((points[4][1] - points[0][1]) ** 2))
-height_C2B2 = np.sqrt(((points[3][0] - points[1][0]) ** 2) + ((points[3][1] - points[1][1]) ** 2))
-maxHeight = max(int(height_A1B1), int(height_C2B2))
-print(maxHeight)
+height_AD = np.sqrt(((pts_src[0][0] - pts_src[3][0]) ** 2) + ((pts_src[0][1] - pts_src[3][1]) ** 2))
+height_BC = np.sqrt(((pts_src[1][0] - pts_src[2][0]) ** 2) + ((pts_src[1][1] - pts_src[2][1]) ** 2))
+maxHeight = max(int(height_AD), int(height_BC))
 
-height_C1B2 = int(np.sqrt(((points[3][0] - points[2][0]) ** 2) + ((points[3][1] - points[2][1]) ** 2)))
-height_B1A2 = int(np.sqrt(((points[5][0] - points[4][0]) ** 2) + ((points[5][1] - points[4][1]) ** 2)))
-print(height_C1B2)
-print(height_B1A2)
+#saida pra ficar em 2D          #eu nao entendi muito bem apenas peguei
+output_pts = np.float32([[0, 0],
+                        [0, maxHeight - 1],
+                        [maxWidth - 1, maxHeight - 1],
+                        [maxWidth - 1, 0]])
 
-pts_dst = np.array([[450,maxHeight], [maxWidth-250,maxHeight], #A1, C2
-                [maxWidth, height_C1B2], [maxWidth, 0], #C1, B2
-                [0, 0], [0, height_B1A2]], np.float32)  #B1, A2
+# Compute the perspective transform M
+M = cv2.getPerspectiveTransform(pts_src,output_pts)
 
-#Calculate Homography
-M, status = cv2.findHomography(points, pts_dst)
-#M = cv2.getPerspectiveTransform(pts_src,pts_dst)
-# Warp source image to destination based on homography
-img_out = cv2.warpPerspective(img_src, M, (maxWidth, maxHeight),flags=cv2.INTER_LINEAR)
-# cv2.imshow("Warped", img_out)
-# cv2.waitKey(0)
-#
-cv2.imwrite("output.jpg", img_out)
+#image esult
+out = cv2.warpPerspective(img_src,M,(maxWidth, maxHeight),flags=cv2.INTER_LINEAR)
+
+# rotate image
+#Rotated_image = cv2.rotate(out, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+cv2.imshow("saida", out)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
