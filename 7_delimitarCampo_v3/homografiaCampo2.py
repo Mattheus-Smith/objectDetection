@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Read source image.
-img_src = cv2.imread('campo_A51.png')
+img_src = cv2.imread('campo_A51.jpg')
 
 # Four corners of the 3D court + mid-court circle point in source image
 # Start top-left corner and go anti-clock wise + mid-court circle point
