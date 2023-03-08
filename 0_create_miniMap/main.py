@@ -2,10 +2,11 @@ import pandas as pd
 from tkinter import *
 from Jogador import *
 
-df1 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\novos\\GPS 01_Jogo 01-t.xlsx")
-df2 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\novos\\GPS 02_Elias-t.xlsx")
-df3 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\novos\\GPS 02_Jogador 2-t.xlsx")
-df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\novos\\GPS 04_Joao Diego-t.xlsx")
+df1 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 1_Wildes_Equipe 1.xlsx")
+df2 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 2_Alvaro_Equipe 1.xlsx")
+df3 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 3_Cristiano_Equipe 1.xlsx")
+
+# df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\novos\\GPS 04_Joao Diego-t.xlsx")
 
 # df1 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\Jogo1_Equipe A_Gps1.xlsx")
 # df2 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\Jogo1_Equipe A_Gps2.xlsx")
@@ -17,7 +18,7 @@ df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\nov
 # df7 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\Jogo1_Equipe B_Gps6.xlsx")
 # df8 = pd.read_excel("C:\\Users\\Smith Fernandes\\OneDrive\\3 - PIBIC\\datas\\Jogo1_Equipe B_Gps8.xlsx")
 
-bancosDados = [df1,df3]
+bancosDados = [df1,df2, df3]
 
 x_campo = 1010
 y_campo = 510
@@ -171,8 +172,8 @@ def achandoValoresXeY(jogadores,BD):
         # _, maxLat, maxLog, _, _, _ = BD[k].max()
         # _, minLat, minLog, _, _, _ = BD[k].min()
 
-        _, maxLat, maxLog = BD[k].max()
-        _, minLat, minLog = BD[k].min()
+        _, maxLat, maxLog, _,_,_,_,_,_,_,_,_ = BD[k].max()
+        _, minLat, minLog, _,_,_,_,_,_,_,_,_= BD[k].min()
 
         dfiLat = maxLat - minLat
         dfiLog = maxLog - minLog
