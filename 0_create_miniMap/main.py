@@ -26,16 +26,22 @@ class Window:
         # Obter as dimensões da imagem
         #self.img_width, self.img_height = self.background_image.width(), self.background_image.height()
 
-        self.tela.geometry('1100x600')
+        self.tela.geometry('1100x700')
         self.tela.resizable(False, False)
 
-        # Cria a janela secundária
-        self.tela_info = Toplevel()
-        self.tela_info.title("Janela secundária")
-        self.tela_info.geometry("400x400")
-        self.tela.lift()
+        # Criando o frame1
+        self.frame1 = Frame(self.tela, bg="blue", height=600)
+        self.frame1.pack(side="top", fill="both", expand=True)
 
-        self.canvas = Canvas(self.tela, width=1010, height=510, bg='black')
+        # Criando o frame2
+        self.frame2 = Frame(self.tela, bg="green", height=100)
+        self.frame2.pack(side="bottom", fill="both", expand=True)
+
+        # Criando o frame3
+        self.frame3 = Frame(self.frame1, bg="blue")
+        self.frame3.pack(side="bottom", anchor="s")
+
+        self.canvas = Canvas(self.frame1, width=1010, height=510, bg='black')
         self.canvas.pack()
 
         # Redimensionar a imagem para ajustar o canvas
@@ -61,16 +67,16 @@ class Window:
 
     def inicializarLoop(self):
         print("Iniciando o Loop!")
-        self.tela.after(0, self.atualiza_posicao_bola)  # agendamento inicial
+        self.frame1.after(0, self.atualiza_posicao_bola)  # agendamento inicial
 
-        sair = Button(self.tela, text='Sair', bg='red', command=self.tela.destroy)
-        sair.pack()
+        sair = Button(self.frame3, text='Sair', bg='red', command=self.tela.destroy)
+        sair.pack(side="left", padx=20, pady=20, anchor="center")
 
-        pause = Button(self.tela, text='Pause', bg='red', command=self.pause)
-        pause.pack(side='left')
+        pause = Button(self.frame3, text='Pause', bg='red', command=self.pause)
+        pause.pack(side="left", padx=20, pady=20, anchor="center")
 
-        play = Button(self.tela, text='Play', bg='red', command=self.play)
-        play.pack(side='left')
+        play = Button(self.frame3, text='Play', bg='red', command=self.play)
+        play.pack(side="left", padx=20, pady=20, anchor="center")
 
         self.tela.mainloop()
 
@@ -198,7 +204,7 @@ class Window:
 
                 else:
                     if( n == len(self.jogadores)-1 ):
-                        self.tela.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
+                        self.frame1.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
 
             self.conectar_jogadores()
 
@@ -234,10 +240,10 @@ def achandoValoresXeY(jogadores,BD):
         # print("===================================")
 
 
-tela = Window()
-achandoValoresXeY(tela.jogadores,bancosDados)
-tela.inicializarJogadoresNoMiniMapa()
-tela.inicializarLoop()
+frame1 = Window()
+achandoValoresXeY(frame1.jogadores,bancosDados)
+frame1.inicializarJogadoresNoMiniMapa()
+frame1.inicializarLoop()
 
 # def atualizarValoresY():
 #     for n in range(0, len(tela.jogadores[id].y_values)):
