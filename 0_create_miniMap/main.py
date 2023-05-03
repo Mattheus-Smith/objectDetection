@@ -186,6 +186,12 @@ def achandoValoresXeY(jogadores,BD):
         dfiLat = maxLat - minLat
         dfiLog = maxLog - minLog
 
+        if(k==0):
+            print("maior lat, menor lat: ", maxLat, minLat)
+            print("maior Log, menor Log: ", maxLog, minLog)
+            print("max - ",maxLat,maxLog)
+            print("min - ",minLat,minLog)
+
         # print("max - ",maxLat,maxLog)
         # print("min - ",minLat,minLog)
 

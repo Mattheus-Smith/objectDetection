@@ -91,7 +91,7 @@ def detectionJogador(arrayColors, array_por_Colors):
         return 0  # nada
 
 
-img = cv2.imread("./roi/roi_jogador_5.png")
+img = cv2.imread("./roi/roi_jogador_6.png")
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
 img = img.reshape((img.shape[0] * img.shape[1],3)) #represent as row*column,channel number
