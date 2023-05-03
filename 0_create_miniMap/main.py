@@ -29,6 +29,12 @@ class Window:
         self.tela.geometry('1100x600')
         self.tela.resizable(False, False)
 
+        # Cria a janela secundária
+        self.tela_info = Toplevel()
+        self.tela_info.title("Janela secundária")
+        self.tela_info.geometry("400x400")
+        self.tela.lift()
+
         self.canvas = Canvas(self.tela, width=1010, height=510, bg='black')
         self.canvas.pack()
 
@@ -68,6 +74,26 @@ class Window:
 
         self.tela.mainloop()
 
+    def conectar_jogadores(self):
+        # Obtém as coordenadas atuais dos círculos
+        x1, y1, x2, y2 = self.canvas.coords(self.jogadores[0].jogador)
+        #print(x1, y1, x2, y2)
+
+        # Apaga as linhas antigas
+        self.canvas.delete("line")
+
+        # Cria as novas linhas entre os círculos
+        for i in range(len(self.jogadores) - 1):
+            x1, y1, x2, y2 = self.canvas.coords(self.jogadores[i].jogador)
+            x3, y3, x4, y4 = self.canvas.coords(self.jogadores[i + 1].jogador)
+            line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
+                                      x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
+        # Cria a última linha que liga o último círculo ao primeiro
+        x1, y1, x2, y2 = self.canvas.coords(self.jogadores[-1].jogador)
+        x3, y3, x4, y4 = self.canvas.coords(self.jogadores[0].jogador)
+        line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
+                                  x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
+
     def inicializarJogadoresNoMiniMapa(self):
         print("Inicializando os Jogados em Campo!")
         for n in range(0, len(self.jogadores)):
@@ -76,6 +102,7 @@ class Window:
 
             self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y);
             self.canvas.move(self.jogadores[n].jogador, 0, 0);
+        self.conectar_jogadores()
 
     def atualiza_posicao_bola(self):
         if not self.is_paused:  # verifica se o loop está pausado
@@ -172,6 +199,8 @@ class Window:
                 else:
                     if( n == len(self.jogadores)-1 ):
                         self.tela.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
+
+            self.conectar_jogadores()
 
 def achandoValoresXeY(jogadores,BD):
     print("Processando os Dados!")
