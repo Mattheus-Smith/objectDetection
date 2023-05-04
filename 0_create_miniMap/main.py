@@ -50,13 +50,32 @@ class Window:
 
         self.jogadores = []
         print("Criando os Jogadores!")
+
+        cores = ["blue", "yellow", "green"]
+
         for n in range(0,len(bancosDados)):
         #def __init__(self, canvas, diametro, color, x_values, y_values, contador, status, posicao_x, posicao_y,breakCont, id,x,y):
-            self.jogadores.append(Jogador(self.canvas, 10, "blue", [], [], 0, 0, 0, 0, 0, n, 0, 0))
+            #self.jogadores.append(Jogador(self.canvas, 10, "blue", [], [], 0, 0, 0, 0, 0, n, 0, 0))
+            self.jogadores.append(Jogador(self.canvas, 10, cores[n], [], [], 0, 0, 0, 0, 0, n, 0, 0, 0, 0))
             # if ( n == 0 ):
             #     self.jogadores.append(Jogador(self.canvas, 10, "blue", [], [], 0, 0, 0, 0, 0, n, 0, 0))
             # else:
             #     self.jogadores.append(Jogador(self.canvas, 10, "red" , [], [], 0, 0, 0, 0, 0, n, 0, 0))
+
+        self.comprimento = 0
+        self.largura = 0
+
+        self.label_comprimento = Label(self.frame2, text="comprimento: ")
+        self.label_comprimento.grid(row=0, column=0, sticky=W)
+
+        self.label_comprimento_valor = Label(self.frame2, text=self.comprimento)
+        self.label_comprimento_valor.grid(row=0, column=1, sticky=W)
+
+        self.label_largura = Label(self.frame2, text="largura: ")
+        self.label_largura.grid(row=1, column=0, sticky=W)
+
+        self.label_largura_valor = Label(self.frame2, text=self.largura)
+        self.label_largura_valor.grid(row=1, column=1, sticky=W)
 
     def pause(self):
         self.is_paused = True
@@ -100,15 +119,61 @@ class Window:
         line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
                                   x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
 
+    def verificar_largura(self):
+        # verificar X mais a esquerda(MAIOR X)
+        id1 = 0
+        maior = self.jogadores[id1].y_org
+        for i in range(1, len(self.jogadores)):
+            if (self.jogadores[i].y_org > maior):
+                maior = self.jogadores[i].y_org
+                id1 = i
+
+        # verificar X mais a direita(MENOR X)
+        id2 = 0
+        menor = self.jogadores[id2].y_org
+        for i in range(1, len(self.jogadores)):
+            if (self.jogadores[i].y_org < menor):
+                menor = self.jogadores[i].y_org
+                id2 = i
+
+        # print("maior: ",maior, self.jogadores[id1].color)
+        # print("menor: ", menor, self.jogadores[id2].color)
+        # print("dff: ", maior - menor)
+        self.largura = maior - menor
+        self.label_largura_valor.configure(text=self.largura)
+
+    def verificar_comprimento(self):
+        #verificar X mais a esquerda(MAIOR X)
+        id1 = 0; maior = self.jogadores[id1].x_org
+        for i in range(1, len(self.jogadores)):
+            if(self.jogadores[i].x_org > maior):
+                id1 = i; maior = self.jogadores[i].x_org
+
+        # verificar X mais a direita(MENOR X)
+        id2 = 0; menor = self.jogadores[id2].x_org
+        for i in range(1, len(self.jogadores)):
+            if (self.jogadores[i].x_org < menor):
+                id2 = i; menor = self.jogadores[i].x_org
+
+        # print("maior: ",maior, self.jogadores[id1].color); print("menor: ", menor, self.jogadores[id2].color); print("dff: ", maior - menor)
+        self.comprimento = maior-menor
+        self.label_comprimento_valor.configure(text=self.comprimento)
+
     def inicializarJogadoresNoMiniMapa(self):
         print("Inicializando os Jogados em Campo!")
         for n in range(0, len(self.jogadores)):
             self.jogadores[n].x = int(self.jogadores[n].x_values[self.jogadores[n].contador])
             self.jogadores[n].y = int(self.jogadores[n].y_values[self.jogadores[n].contador])
+            self.jogadores[n].x_org = int(self.jogadores[n].x_values[self.jogadores[n].contador])
+            self.jogadores[n].y_org = int(self.jogadores[n].y_values[self.jogadores[n].contador])
+
+            print(self.jogadores[n].x_org, self.jogadores[n].y_org, self.jogadores[n].color)
 
             self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y);
             self.canvas.move(self.jogadores[n].jogador, 0, 0);
         self.conectar_jogadores()
+        self.verificar_comprimento()
+        self.verificar_largura()
 
     def atualiza_posicao_bola(self):
         if not self.is_paused:  # verifica se o loop está pausado
@@ -129,6 +194,8 @@ class Window:
                     self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
                     self.jogadores[n].right()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
+                    self.jogadores[n].x_org+=1
+                    self.jogadores[n].y_org+=0
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 1 - x: ", xb, " y: ", ys - 10)
                     self.jogadores[n].definirStatus()
@@ -137,6 +204,8 @@ class Window:
                     self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
                     self.jogadores[n].left()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
+                    self.jogadores[n].x_org += -1
+                    self.jogadores[n].y_org += 0
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 2 - x: ", xb, " y: ", ys - 10)
                     self.jogadores[n].definirStatus()
@@ -145,6 +214,8 @@ class Window:
                     self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
                     self.jogadores[n].up()
                     self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
+                    self.jogadores[n].x_org += 0
+                    self.jogadores[n].y_org += 1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 3 - x: ", xb, " y: ", ys - 10)
                     self.jogadores[n].definirStatus()
@@ -153,6 +224,8 @@ class Window:
                     self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
                     self.jogadores[n].down()
                     self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
+                    self.jogadores[n].x_org += 0
+                    self.jogadores[n].y_org += -1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 4 - x: ", xb, " y: ", ys - 10)
                     self.jogadores[n].definirStatus()
@@ -163,6 +236,8 @@ class Window:
                     self.jogadores[n].up()
                     self.jogadores[n].right()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                    self.jogadores[n].x_org += 1
+                    self.jogadores[n].y_org += 1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     #print("status 5 - x: ",xb ," y: ",ys-10)
                     self.jogadores[n].definirStatus()
@@ -173,6 +248,8 @@ class Window:
                     self.jogadores[n].up()
                     self.jogadores[n].left()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                    self.jogadores[n].x_org += -1
+                    self.jogadores[n].y_org += 1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 6 - x: ",xb ," y: ",ys-10)
                     self.jogadores[n].definirStatus()
@@ -184,6 +261,8 @@ class Window:
                     self.jogadores[n].down()
                     self.jogadores[n].left()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                    self.jogadores[n].x_org += -1
+                    self.jogadores[n].y_org += -1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 7 - x: ", xb, " y: ", ys - 10)
                     self.jogadores[n].definirStatus()
@@ -194,6 +273,8 @@ class Window:
                     self.jogadores[n].down()
                     self.jogadores[n].right()
                     self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                    self.jogadores[n].x_org += 1
+                    self.jogadores[n].y_org += -1
                     xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
                     # print("status 8 - x: ",xb ," y: ",ys-10)
                     self.jogadores[n].definirStatus()
@@ -207,6 +288,8 @@ class Window:
                         self.frame1.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
 
             self.conectar_jogadores()
+            self.verificar_comprimento()
+            self.verificar_largura()
 
 def achandoValoresXeY(jogadores,BD):
     print("Processando os Dados!")
@@ -238,7 +321,6 @@ def achandoValoresXeY(jogadores,BD):
         # print(x_values)
         # print(y_values)
         # print("===================================")
-
 
 frame1 = Window()
 achandoValoresXeY(frame1.jogadores,bancosDados)

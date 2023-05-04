@@ -1,6 +1,7 @@
 class Jogador:
-    def __init__(self, canvas, diametro, color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y):
+    def __init__(self, canvas, diametro, color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y, x_org, y_org):
         self.canvas = canvas
+        self.color = color
         self.jogador = canvas.create_oval(0, 0, diametro, diametro, fill=color)
         self.x_values = x_values
         self.y_values = y_values
@@ -12,6 +13,8 @@ class Jogador:
         self.id = id
         self.x = x
         self.y = y
+        self.x_org = x_org
+        self.y_org = y_org
 
     def move(self):
         #xb, yb, xs, ys = self.canvas.coords(self.jogador)
