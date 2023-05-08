@@ -1,6 +1,11 @@
 import pandas as pd
+import numpy as np
 from tkinter import *
+
+from PIL import Image, ImageTk
+
 from Jogador import *
+from Metricas import *
 
 df1 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 1_Wildes_Equipe 1.xlsx")
 df2 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 2_Alvaro_Equipe 1.xlsx")
@@ -10,8 +15,8 @@ df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoC
 df5 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 5_Flavio_Equipe 2.xlsx")
 df6 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 6_Antonio_Equipe 2.xlsx")
 
-#bancosDados = [df1,df2, df3]
-bancosDados = [df4,df5, df6]
+bancosDados = [df1,df2, df3]
+#bancosDados = [df4,df5, df6]
 
 x_campo = 1010
 y_campo = 510
@@ -22,31 +27,37 @@ class Window:
         self.tela = Tk()
         self.tela.title('MiniMapa dos Jogadores')
         self.is_paused = False  # variável de controle do estado do loop
-        #self.background_image = PhotoImage(file="campo_futebol.png")
-        # Obter as dimensões da imagem
-        #self.img_width, self.img_height = self.background_image.width(), self.background_image.height()
 
-        self.tela.geometry('1100x700')
+        # Carrega a imagem original usando a biblioteca PIL
+        self.background_image_original = Image.open("campo_futebol_menor.png")
+
+        # Obter as dimensões da imagem
+        self.width = 1100
+        self.height = 600
+
+        self.image_resized = self.background_image_original.resize((self.width, self.height), resample=Image.LANCZOS)
+
+        # Converte a imagem para um objeto Tkinter PhotoImage
+        self.image_tk = ImageTk.PhotoImage(self.image_resized)
+
+        self.tela.geometry('1300x700')
         self.tela.resizable(False, False)
 
         # Criando o frame1
-        self.frame1 = Frame(self.tela, bg="blue", height=600)
+        self.frame1 = Frame(self.tela, height=600)
         self.frame1.pack(side="top", fill="both", expand=True)
 
         # Criando o frame2
-        self.frame2 = Frame(self.tela, bg="green", height=100)
+        self.frame2 = Frame(self.tela, height=100)
         self.frame2.pack(side="bottom", fill="both", expand=True)
 
         # Criando o frame3
-        self.frame3 = Frame(self.frame1, bg="blue")
+        self.frame3 = Frame(self.frame1)
         self.frame3.pack(side="bottom", anchor="s")
 
-        self.canvas = Canvas(self.frame1, width=1010, height=510, bg='black')
+        self.canvas = Canvas(self.frame1, width=1010, height=510)
         self.canvas.pack()
-
-        # Redimensionar a imagem para ajustar o canvas
-        #self.resized_image = self.background_image.subsample(1010, 510)
-        # self.canvas.create_image(0, 0, image=self.resized_image, anchor="nw")
+        self.canvas.create_image(0, 0, image=self.image_tk, anchor="nw")
 
         self.jogadores = []
         print("Criando os Jogadores!")
@@ -62,20 +73,29 @@ class Window:
             # else:
             #     self.jogadores.append(Jogador(self.canvas, 10, "red" , [], [], 0, 0, 0, 0, 0, n, 0, 0))
 
-        self.comprimento = 0
-        self.largura = 0
+        self.metricas = Metricas(self.jogadores,0, 0, 0)
 
         self.label_comprimento = Label(self.frame2, text="comprimento: ")
         self.label_comprimento.grid(row=0, column=0, sticky=W)
 
-        self.label_comprimento_valor = Label(self.frame2, text=self.comprimento)
+        self.label_comprimento_valor = Label(self.frame2, text=self.metricas.comprimento)
         self.label_comprimento_valor.grid(row=0, column=1, sticky=W)
 
         self.label_largura = Label(self.frame2, text="largura: ")
         self.label_largura.grid(row=1, column=0, sticky=W)
 
-        self.label_largura_valor = Label(self.frame2, text=self.largura)
+        self.label_largura_valor = Label(self.frame2, text=self.metricas.largura)
         self.label_largura_valor.grid(row=1, column=1, sticky=W)
+
+        self.label_LPW = Label(self.frame2, text="LpW: ")
+        self.label_LPW.grid(row=2, column=0, sticky=W)
+
+        self.label_LPW_valor = Label(self.frame2, text=self.metricas.LPW)
+        self.label_LPW_valor.grid(row=2, column=1, sticky=W)
+
+        self.centroide = self.canvas.create_oval(0, 0, 10, 10, fill="pink")
+        self.centroide_x = 0
+        self.centroide_y = 0
 
     def pause(self):
         self.is_paused = True
@@ -119,45 +139,25 @@ class Window:
         line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
                                   x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
 
-    def verificar_largura(self):
-        # verificar X mais a esquerda(MAIOR X)
-        id1 = 0
-        maior = self.jogadores[id1].y_org
-        for i in range(1, len(self.jogadores)):
-            if (self.jogadores[i].y_org > maior):
-                maior = self.jogadores[i].y_org
-                id1 = i
+    def verificar_centroide(self):
+        media_x=[]
+        for i in range(0, len(self.jogadores)):
+            media_x.append(self.jogadores[i].x_org)
 
-        # verificar X mais a direita(MENOR X)
-        id2 = 0
-        menor = self.jogadores[id2].y_org
-        for i in range(1, len(self.jogadores)):
-            if (self.jogadores[i].y_org < menor):
-                menor = self.jogadores[i].y_org
-                id2 = i
+        media_y = []
+        for i in range(0, len(self.jogadores)):
+            media_y.append(self.jogadores[i].y_org)
 
-        # print("maior: ",maior, self.jogadores[id1].color)
-        # print("menor: ", menor, self.jogadores[id2].color)
-        # print("dff: ", maior - menor)
-        self.largura = maior - menor
-        self.label_largura_valor.configure(text=self.largura)
+        self.centroide_x = np.mean(media_x)
+        self.centroide_y = np.mean(media_y)
 
-    def verificar_comprimento(self):
-        #verificar X mais a esquerda(MAIOR X)
-        id1 = 0; maior = self.jogadores[id1].x_org
-        for i in range(1, len(self.jogadores)):
-            if(self.jogadores[i].x_org > maior):
-                id1 = i; maior = self.jogadores[i].x_org
+        # Atualiza a posição do objeto oval
+        self.canvas.coords(self.centroide, self.centroide_x, self.centroide_y, self.centroide_x + 10,self.centroide_y + 10);
 
-        # verificar X mais a direita(MENOR X)
-        id2 = 0; menor = self.jogadores[id2].x_org
-        for i in range(1, len(self.jogadores)):
-            if (self.jogadores[i].x_org < menor):
-                id2 = i; menor = self.jogadores[i].x_org
-
-        # print("maior: ",maior, self.jogadores[id1].color); print("menor: ", menor, self.jogadores[id2].color); print("dff: ", maior - menor)
-        self.comprimento = maior-menor
-        self.label_comprimento_valor.configure(text=self.comprimento)
+    def att_labels(self):
+        self.label_comprimento_valor.configure(text=self.metricas.comprimento)
+        self.label_largura_valor.configure(text=self.metricas.largura)
+        self.label_LPW_valor.configure(text=self.metricas.LPW)
 
     def inicializarJogadoresNoMiniMapa(self):
         print("Inicializando os Jogados em Campo!")
@@ -167,13 +167,19 @@ class Window:
             self.jogadores[n].x_org = int(self.jogadores[n].x_values[self.jogadores[n].contador])
             self.jogadores[n].y_org = int(self.jogadores[n].y_values[self.jogadores[n].contador])
 
-            print(self.jogadores[n].x_org, self.jogadores[n].y_org, self.jogadores[n].color)
+            # print(self.jogadores[n].x_org, self.jogadores[n].y_org, self.jogadores[n].color)
 
             self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y);
             self.canvas.move(self.jogadores[n].jogador, 0, 0);
+            self.canvas.coords(self.centroide, self.centroide_x,self.centroide_y, self.centroide_x+10,self.centroide_y+10);
+
         self.conectar_jogadores()
-        self.verificar_comprimento()
-        self.verificar_largura()
+        self.metricas.verificar_comprimento()
+        self.metricas.verificar_largura()
+        self.metricas.att_lpw()
+        self.verificar_centroide()
+        self.att_labels()
+
 
     def atualiza_posicao_bola(self):
         if not self.is_paused:  # verifica se o loop está pausado
@@ -282,14 +288,21 @@ class Window:
                 if (self.jogadores[n].breakCont == 1 and self.jogadores[n].status == 0):
                     print("estorou tamanho")
                     self.canvas.move(self.jogadores[n].jogador, 0, 0)
+                    self.metricas.get_comprimento_media()
+                    self.metricas.get_largura_media()
+                    self.metricas.get_lpw_media()
+                    break
 
                 else:
                     if( n == len(self.jogadores)-1 ):
                         self.frame1.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
 
             self.conectar_jogadores()
-            self.verificar_comprimento()
-            self.verificar_largura()
+            self.metricas.verificar_comprimento()
+            self.metricas.verificar_largura()
+            self.metricas.att_lpw()
+            self.verificar_centroide()
+            self.att_labels()
 
 def achandoValoresXeY(jogadores,BD):
     print("Processando os Dados!")
