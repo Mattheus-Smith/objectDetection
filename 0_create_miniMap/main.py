@@ -50,15 +50,15 @@ class Window:
         self.frame1.pack(side="top", fill="both", expand=True)
 
         # Criando o frame2 - footer
-        self.frame2 = Frame(self.tela, height=100)
+        self.frame2 = Frame(self.tela, height=100, width=600)
         self.frame2.pack(side="bottom", fill="both", expand=True)
 
         # Criando o footer da EQUIPE 1
-        self.footer1 = Frame(self.frame2, bg="lightblue")
+        self.footer1 = Frame(self.frame2, bg="lightblue", width=300)
         self.footer1.pack(side="left", padx=10, pady=10)
 
         # Criando o footer da EQUIPE 2
-        self.footer2 = Frame(self.frame2, bg="lightgreen")
+        self.footer2 = Frame(self.frame2, bg="lightgreen", width=300)
         self.footer2.pack(side="right", padx=10, pady=10)
 
         # Criando o frame3 - botoes de reproducao
@@ -83,23 +83,26 @@ class Window:
 
         equipe1,equipe2 = self.dividir_em_equipe()
 
-        self.metricas_1 = Metricas(equipe1, 0, 0, 0)
+        self.metricas_1 = Metricas(equipe1, 0, 0, 0, 0)
         self.centroide1 = self.canvas.create_oval(0, 0, 10, 10, fill=cores[2])
 
-        self.metricas_2 = Metricas(equipe2, 0, 0, 0)
+        self.metricas_2 = Metricas(equipe2, 0, 0, 0, 0)
         self.centroide2 = self.canvas.create_oval(0, 0, 10, 10, fill=cores[2])
 
         self.label_comprimento_valor_1 = None
         self.label_largura_valor_1 = None
         self.label_LPW_valor_1 = None
+        self.label_team_Separateness_1 = None
 
         self.label_comprimento_valor_2 = None
         self.label_largura_valor_2 = None
         self.label_LPW_valor_2 = None
+        self.label_team_Separateness_2 = None
 
     def criar_footer_informacoes(self):
+        ###==================== EQUIPE 1
 
-        equipe1 = Label(self.footer1, text="EQUIPE 1")
+        equipe1 = Label(self.footer1, text="EQUIPE 1", fg="blue")
         equipe1.grid(row=0, column=0, columnspan=2)
 
         label_comprimento_1 = Label(self.footer1, text="comprimento: ")
@@ -120,10 +123,16 @@ class Window:
         self.label_LPW_valor_1 = Label(self.footer1, text=self.metricas_1.LPW)
         self.label_LPW_valor_1.grid(row=3, column=1, sticky=W)
 
+        label_team_Separateness_1 = Label(self.footer1, text="Team's Separateness: ")
+        label_team_Separateness_1.grid(row=4, column=0, sticky=W)
+
+        self.label_team_Separateness_1 = Label(self.footer1, text=self.metricas_1.team_Separateness)
+        self.label_team_Separateness_1.grid(row=4, column=1, sticky=W)
+
 
         ###==================== EQUIPE 2
 
-        equipe1 = Label(self.footer2, text="EQUIPE 2")
+        equipe1 = Label(self.footer2, text="EQUIPE 2", fg="red")
         equipe1.grid(row=0, column=0, columnspan=2)
 
         label_comprimento_1 = Label(self.footer2, text="comprimento: ")
@@ -143,6 +152,12 @@ class Window:
 
         self.label_LPW_valor_2 = Label(self.footer2, text=self.metricas_2.LPW)
         self.label_LPW_valor_2.grid(row=3, column=1, sticky=W)
+
+        label_team_Separateness_2 = Label(self.footer2, text="Team's Separateness: ")
+        label_team_Separateness_2.grid(row=4, column=0, sticky=W)
+
+        self.label_team_Separateness_2 = Label(self.footer2, text=self.metricas_2.team_Separateness)
+        self.label_team_Separateness_2.grid(row=4, column=1, sticky=W)
 
     def pause(self):
         self.is_paused = True
@@ -242,11 +257,15 @@ class Window:
         self.label_largura_valor_1.configure(text=self.metricas_1.largura)
         texto_formatado = "{:.2f}".format(self.metricas_1.LPW)
         self.label_LPW_valor_1.configure(text=texto_formatado)
+        texto_formatado = "{:.2f}".format(self.metricas_1.team_Separateness)
+        self.label_team_Separateness_1.configure(text=texto_formatado)
 
         self.label_comprimento_valor_2.configure(text=self.metricas_2.comprimento)
         self.label_largura_valor_2.configure(text=self.metricas_2.largura)
         texto_formatado = "{:.2f}".format(self.metricas_2.LPW)
         self.label_LPW_valor_2.configure(text=texto_formatado)
+        texto_formatado = "{:.2f}".format(self.metricas_2.team_Separateness)
+        self.label_team_Separateness_2.configure(text=texto_formatado)
 
     def inicializarJogadoresNoMiniMapa(self):
         print("Inicializando os Jogados em Campo!")
@@ -269,14 +288,15 @@ class Window:
 
         self.metricas_1.verificar_comprimento()
         self.metricas_1.verificar_largura()
+        self.metricas_1.verificar_team_Separateness()
         self.metricas_1.att_lpw()
 
         self.metricas_2.verificar_comprimento()
         self.metricas_2.verificar_largura()
+        self.metricas_2.verificar_team_Separateness()
         self.metricas_2.att_lpw()
 
         self.att_labels()
-
 
     def atualiza_posicao_bola(self):
         if not self.is_paused:  # verifica se o loop está pausado
@@ -399,10 +419,12 @@ class Window:
 
             self.metricas_1.verificar_comprimento()
             self.metricas_1.verificar_largura()
+            self.metricas_1.verificar_team_Separateness()
             self.metricas_1.att_lpw()
 
             self.metricas_2.verificar_comprimento()
             self.metricas_2.verificar_largura()
+            self.metricas_2.verificar_team_Separateness()
             self.metricas_2.att_lpw()
 
             self.att_labels()

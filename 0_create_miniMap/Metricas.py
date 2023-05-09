@@ -2,14 +2,17 @@ import numpy as np
 from Jogador import *
 
 class Metricas:
-    def __init__(self, jogadores,comprimento, largura, LPW):
+    def __init__(self, jogadores,comprimento, largura, LPW, team_Separateness):
         self.jogadores = jogadores
         self.comprimento = comprimento
         self.largura = largura
         self.LPW = LPW
+        self.team_Separateness = team_Separateness
+
         self.comprimento_vetor = []
         self.largura_vetor = []
         self.LPW_vetor = []
+        self.team_Separateness_vetor = []
         self.centroidde_vetor = []
         self.qte_mov_jogadores_vetor = []
         self.media_jogadores_x_vetor = []
@@ -65,6 +68,15 @@ class Metricas:
     def att_lpw(self):
         self.LPW = self.comprimento / self.largura
         self.LPW_vetor.append(self.LPW)
+
+    def verificar_team_Separateness(self):
+        total_dist = 0
+        for i in range(0, len(self.jogadores)):
+            for j in range(0, len(self.jogadores)):
+                distancia = np.sqrt( pow(self.jogadores[i].x_org-self.jogadores[j].x_org, 2) + pow(self.jogadores[i].y_org-self.jogadores[j].y_org, 2))
+            total_dist+=distancia
+        self.team_Separateness = total_dist
+        self.team_Separateness_vetor.append(total_dist)
 
     def get_largura_media(self):
         media = np.mean(self.largura_vetor)
