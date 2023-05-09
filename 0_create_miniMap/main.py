@@ -29,6 +29,8 @@ class Window:
         self.tela = Tk()
         self.tela.title('MiniMapa dos Jogadores')
         self.is_paused = False  # variável de controle do estado do loop
+        self.is_next = False
+        self.speed = 5
 
         # Carrega a imagem original usando a biblioteca PIL
         self.background_image_original = Image.open("campo_futebol_menor.png")
@@ -166,18 +168,49 @@ class Window:
         self.is_paused = False
         self.atualiza_posicao_bola()  # retoma o loop
 
+    def next(self):
+        self.pause()
+        self.is_next = True
+        self.movimentar_jogadores()
+        self.metricas_1.jogadores, self.metricas_2.jogadores = self.dividir_em_equipe()
+        self.conectar_jogadores(self.metricas_1.jogadores, self.metricas_2.jogadores)
+        self.verificar_centroide(self.metricas_1.jogadores, self.metricas_2.jogadores)
+
+        self.metricas_1.verificar_comprimento()
+        self.metricas_1.verificar_largura()
+        self.metricas_1.verificar_team_Separateness()
+        self.metricas_1.att_lpw()
+
+        self.metricas_2.verificar_comprimento()
+        self.metricas_2.verificar_largura()
+        self.metricas_2.verificar_team_Separateness()
+        self.metricas_2.att_lpw()
+
+        self.att_labels()
+
+    def atualizar_speed(self, valor):
+        self.speed = valor
+
     def inicializarLoop(self):
         print("Iniciando o Loop!")
         self.frame1.after(0, self.atualiza_posicao_bola)  # agendamento inicial
 
+        # Cria o controle deslizante
+        controle_deslizante = Scale(self.frame3, from_=1, to=30, orient="horizontal", resolution=1, command=self.atualizar_speed)
+        controle_deslizante.set(self.speed)  # Define o valor inicial
+        controle_deslizante.pack(side="left", padx=20, pady=20, anchor="center")
+
         sair = Button(self.frame3, text='Sair', bg='red', command=self.tela.destroy)
-        sair.pack(side="left", padx=20, pady=20, anchor="center")
+        sair.pack(side="left", padx=20, pady=10, anchor="center")
 
         pause = Button(self.frame3, text='Pause', bg='red', command=self.pause)
         pause.pack(side="left", padx=20, pady=20, anchor="center")
 
         play = Button(self.frame3, text='Play', bg='red', command=self.play)
         play.pack(side="left", padx=20, pady=20, anchor="center")
+
+        next = Button(self.frame3, text='Next', bg='red', command=self.next)
+        next.pack(side="left", padx=20, pady=20, anchor="center")
 
         self.tela.mainloop()
 
@@ -298,120 +331,126 @@ class Window:
 
         self.att_labels()
 
+    def movimentar_jogadores(self):
+        for n in range(0, len(self.jogadores)):
+            # print(tam," == ", contador)
+            if (len(self.jogadores[n].x_values) == self.jogadores[n].contador + 1):
+                self.jogadores[n].breakCont = 1
+                self.jogadores[n].status = -1
+
+            if (self.jogadores[n].status == 0):
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                self.jogadores[n].contador = self.jogadores[n].contador + 1
+                self.jogadores[n].posicao_x = int(self.jogadores[n].x_values[self.jogadores[n].contador] - self.jogadores[n].x_values[self.jogadores[n].contador - 1])
+                self.jogadores[n].posicao_y = int(self.jogadores[n].y_values[self.jogadores[n].contador] - self.jogadores[n].y_values[self.jogadores[n].contador - 1])
+                self.jogadores[n].definirStatus()
+                # print("Xa:", xb, "- Ya:", ys - 10, " ||  Xd:", int(self.jogadores[n].x_values[self.jogadores[n].contador]),"- Yd:", int(self.jogadores[n].y_values[self.jogadores[n].contador]), "status: ", self.jogadores[n].status)
+
+            elif (self.jogadores[n].status == 1):  # direita
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
+                self.jogadores[n].right()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
+                self.jogadores[n].x_org += 1
+                self.jogadores[n].y_org += 0
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 1 - x: ", xb, " y: ", ys - 10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 2):  # esquerda
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
+                self.jogadores[n].left()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
+                self.jogadores[n].x_org += -1
+                self.jogadores[n].y_org += 0
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 2 - x: ", xb, " y: ", ys - 10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 3):  # cima
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
+                self.jogadores[n].up()
+                self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
+                self.jogadores[n].x_org += 0
+                self.jogadores[n].y_org += 1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 3 - x: ", xb, " y: ", ys - 10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 4):  # baixo
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
+                self.jogadores[n].down()
+                self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
+                self.jogadores[n].x_org += 0
+                self.jogadores[n].y_org += -1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 4 - x: ", xb, " y: ", ys - 10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 5):  # direita and cima
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
+                self.jogadores[n].up()
+                self.jogadores[n].right()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                self.jogadores[n].x_org += 1
+                self.jogadores[n].y_org += 1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 5 - x: ",xb ," y: ",ys-10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 6):  # esquerda and cima
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
+                self.jogadores[n].up()
+                self.jogadores[n].left()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                self.jogadores[n].x_org += -1
+                self.jogadores[n].y_org += 1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 6 - x: ",xb ," y: ",ys-10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 7):  # esquerda and baixo
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
+                # print("Px: ", posicao_x," - Py: ", posicao_y)
+                self.jogadores[n].down()
+                self.jogadores[n].left()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                self.jogadores[n].x_org += -1
+                self.jogadores[n].y_org += -1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 7 - x: ", xb, " y: ", ys - 10)
+                self.jogadores[n].definirStatus()
+
+            elif (self.jogadores[n].status == 8):  # direita and baixo
+                self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
+                self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
+                self.jogadores[n].down()
+                self.jogadores[n].right()
+                self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
+                self.jogadores[n].x_org += 1
+                self.jogadores[n].y_org += -1
+                xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
+                # print("status 8 - x: ",xb ," y: ",ys-10)
+                self.jogadores[n].definirStatus()
+
+            if (self.jogadores[n].breakCont == 1 and self.jogadores[n].status == -1):
+                print("estorou tamanho")
+                self.canvas.move(self.jogadores[n].jogador, 0, 0)
+                self.metricas_1.relatorio_metricas(1)
+                self.metricas_2.relatorio_metricas(2)
+                break
+            elif(self.is_next):
+                a=1
+            else:
+                if (n == len(self.jogadores) - 1):
+                    self.frame1.after(self.speed, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
+
     def atualiza_posicao_bola(self):
         if not self.is_paused:  # verifica se o loop está pausado
-            for n in range (0, len(self.jogadores)):
-                # print(tam," == ", contador)
-                if ( len(self.jogadores[n].x_values) == self.jogadores[n].contador + 1 ):
-                    self.jogadores[n].breakCont = 1
 
-                if (self.jogadores[n].status == 0):
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    self.jogadores[n].contador = self.jogadores[n].contador + 1
-                    self.jogadores[n].posicao_x = int(self.jogadores[n].x_values[self.jogadores[n].contador] - self.jogadores[n].x_values[self.jogadores[n].contador - 1])
-                    self.jogadores[n].posicao_y = int(self.jogadores[n].y_values[self.jogadores[n].contador] - self.jogadores[n].y_values[self.jogadores[n].contador - 1])
-                    self.jogadores[n].definirStatus()
-                    #print("Xa:", xb, "- Ya:", ys - 10, " ||  Xd:", int(self.jogadores[n].x_values[self.jogadores[n].contador]),"- Yd:", int(self.jogadores[n].y_values[self.jogadores[n].contador]), "status: ", self.jogadores[n].status)
-
-                elif (self.jogadores[n].status == 1):  # direita
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
-                    self.jogadores[n].right()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
-                    self.jogadores[n].x_org+=1
-                    self.jogadores[n].y_org+=0
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 1 - x: ", xb, " y: ", ys - 10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 2):  # esquerda
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
-                    self.jogadores[n].left()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, 0)
-                    self.jogadores[n].x_org += -1
-                    self.jogadores[n].y_org += 0
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 2 - x: ", xb, " y: ", ys - 10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 3):  # cima
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
-                    self.jogadores[n].up()
-                    self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
-                    self.jogadores[n].x_org += 0
-                    self.jogadores[n].y_org += 1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 3 - x: ", xb, " y: ", ys - 10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 4):  # baixo
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
-                    self.jogadores[n].down()
-                    self.canvas.move(self.jogadores[n].jogador, 0, self.jogadores[n].y)
-                    self.jogadores[n].x_org += 0
-                    self.jogadores[n].y_org += -1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 4 - x: ", xb, " y: ", ys - 10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 5):  # direita and cima
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
-                    self.jogadores[n].up()
-                    self.jogadores[n].right()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
-                    self.jogadores[n].x_org += 1
-                    self.jogadores[n].y_org += 1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    #print("status 5 - x: ",xb ," y: ",ys-10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 6):  # esquerda and cima
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y - 1
-                    self.jogadores[n].up()
-                    self.jogadores[n].left()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
-                    self.jogadores[n].x_org += -1
-                    self.jogadores[n].y_org += 1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 6 - x: ",xb ," y: ",ys-10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 7):  # esquerda and baixo
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x + 1
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
-                    # print("Px: ", posicao_x," - Py: ", posicao_y)
-                    self.jogadores[n].down()
-                    self.jogadores[n].left()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
-                    self.jogadores[n].x_org += -1
-                    self.jogadores[n].y_org += -1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 7 - x: ", xb, " y: ", ys - 10)
-                    self.jogadores[n].definirStatus()
-
-                elif (self.jogadores[n].status == 8):  # direita and baixo
-                    self.jogadores[n].posicao_x = self.jogadores[n].posicao_x - 1
-                    self.jogadores[n].posicao_y = self.jogadores[n].posicao_y + 1
-                    self.jogadores[n].down()
-                    self.jogadores[n].right()
-                    self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y)
-                    self.jogadores[n].x_org += 1
-                    self.jogadores[n].y_org += -1
-                    xb, yb, xs, ys = self.canvas.coords(self.jogadores[n].jogador)
-                    # print("status 8 - x: ",xb ," y: ",ys-10)
-                    self.jogadores[n].definirStatus()
-
-                if (self.jogadores[n].breakCont == 1 and self.jogadores[n].status == 0):
-                    print("estorou tamanho")
-                    self.canvas.move(self.jogadores[n].jogador, 0, 0)
-                    self.metricas_1.relatorio_metricas()
-                    self.metricas_2.relatorio_metricas()
-                    break
-
-                else:
-                    if( n == len(self.jogadores)-1 ):
-                        self.frame1.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
+            self.movimentar_jogadores()
 
             self.metricas_1.jogadores, self.metricas_2.jogadores = self.dividir_em_equipe()
             self.conectar_jogadores(self.metricas_1.jogadores, self.metricas_2.jogadores)

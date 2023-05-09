@@ -13,7 +13,7 @@ class Metricas:
         self.largura_vetor = []
         self.LPW_vetor = []
         self.team_Separateness_vetor = []
-        self.centroidde_vetor = []
+        self.centroide_vetor = []
         self.qte_mov_jogadores_vetor = []
         self.media_jogadores_x_vetor = []
         self.media_jogadores_y_vetor = []
@@ -80,19 +80,25 @@ class Metricas:
 
     def get_largura_media(self):
         media = np.mean(self.largura_vetor)
-        print("largura media: ",media)
+        #print("largura media: ",media)
+        return media
 
     def get_comprimento_media(self):
         media = np.mean(self.comprimento_vetor)
-        print("comprimento media: ",media)
+        #print("comprimento media: ",media)
+        return media
 
     def get_lpw_media(self):
         media = np.mean(self.LPW_vetor)
-        print("LPW media: ",media)
+        #print("LPW media: ",media)
+        return media
 
     def get_centroide_media(self):
         media = np.mean(self.centroide_vetor)
-        print("centroide media: ",media)
+        #print("centroide media: ",media)
+        return media
 
-    def relatorio_metricas(self):
-        print("Largura: ", self.get_largura_media(), " | Comprimento: ", self.get_comprimento_media(), " | LpW: ", self.get_lpw_media(), " | Centroide: ", self.get_centroide_media())
+    def relatorio_metricas(self, equipe):
+        #print("Largura: ", self.get_largura_media(), " | Comprimento: ", self.get_comprimento_media(), " | LpW: ", self.get_lpw_media(), " | Centroide: ", self.get_centroide_media())
+        print("EQUIPE ",equipe ," | Largura: ", self.get_largura_media(), " | Comprimento: ", self.get_comprimento_media(), " | LpW: ",
+              self.get_lpw_media())
