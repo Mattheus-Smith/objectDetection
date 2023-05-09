@@ -1,7 +1,8 @@
 class Jogador:
-    def __init__(self, canvas, diametro, color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y, x_org, y_org):
+    def __init__(self, canvas, diametro, equipe,color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y, x_org, y_org):
         self.canvas = canvas
         self.color = color
+        self.equipe = equipe
         self.jogador = canvas.create_oval(0, 0, diametro, diametro, fill=color)
         self.x_values = x_values
         self.y_values = y_values

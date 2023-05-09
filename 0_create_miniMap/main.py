@@ -15,8 +15,10 @@ df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoC
 df5 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 5_Flavio_Equipe 2.xlsx")
 df6 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 6_Antonio_Equipe 2.xlsx")
 
-bancosDados = [df1,df2, df3]
-#bancosDados = [df4,df5, df6]
+bancosDados = [df1,df2, df3, df4,df5,df6]
+bancosDados1 = [df1,df2, df3]
+#bancosDados2 = [df4,df5, df6]
+
 
 x_campo = 1010
 y_campo = 510
@@ -43,15 +45,23 @@ class Window:
         self.tela.geometry('1300x700')
         self.tela.resizable(False, False)
 
-        # Criando o frame1
+        # Criando o frame1 - minimapa
         self.frame1 = Frame(self.tela, height=600)
         self.frame1.pack(side="top", fill="both", expand=True)
 
-        # Criando o frame2
+        # Criando o frame2 - footer
         self.frame2 = Frame(self.tela, height=100)
         self.frame2.pack(side="bottom", fill="both", expand=True)
 
-        # Criando o frame3
+        # Criando o footer da EQUIPE 1
+        self.footer1 = Frame(self.frame2, bg="lightblue")
+        self.footer1.pack(side="left", padx=10, pady=10)
+
+        # Criando o footer da EQUIPE 2
+        self.footer2 = Frame(self.frame2, bg="lightgreen")
+        self.footer2.pack(side="right", padx=10, pady=10)
+
+        # Criando o frame3 - botoes de reproducao
         self.frame3 = Frame(self.frame1)
         self.frame3.pack(side="bottom", anchor="s")
 
@@ -59,43 +69,80 @@ class Window:
         self.canvas.pack()
         self.canvas.create_image(0, 0, image=self.image_tk, anchor="nw")
 
-        self.jogadores = []
-        print("Criando os Jogadores!")
 
-        cores = ["blue", "yellow", "green"]
+        print("Criando as Equipes!")
+        self.jogadores = []
+        cores = ["blue", "red", "pink"]
 
         for n in range(0,len(bancosDados)):
-        #def __init__(self, canvas, diametro, color, x_values, y_values, contador, status, posicao_x, posicao_y,breakCont, id,x,y):
-            #self.jogadores.append(Jogador(self.canvas, 10, "blue", [], [], 0, 0, 0, 0, 0, n, 0, 0))
-            self.jogadores.append(Jogador(self.canvas, 10, cores[n], [], [], 0, 0, 0, 0, 0, n, 0, 0, 0, 0))
-            # if ( n == 0 ):
-            #     self.jogadores.append(Jogador(self.canvas, 10, "blue", [], [], 0, 0, 0, 0, 0, n, 0, 0))
-            # else:
-            #     self.jogadores.append(Jogador(self.canvas, 10, "red" , [], [], 0, 0, 0, 0, 0, n, 0, 0))
+            if(n < 3):
+                #(self, canvas, diametro, equipe,color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y, x_org, y_org):
+                self.jogadores.append(Jogador(self.canvas, 10, 1,cores[0], [], [], 0, 0, 0, 0, 0, n, 0, 0, 0, 0))
+            else:
+                self.jogadores.append(Jogador(self.canvas, 10, 2,cores[1], [], [], 0, 0, 0, 0, 0, n, 0, 0, 0, 0))
 
-        self.metricas = Metricas(self.jogadores,0, 0, 0)
+        equipe1,equipe2 = self.dividir_em_equipe()
 
-        self.label_comprimento = Label(self.frame2, text="comprimento: ")
-        self.label_comprimento.grid(row=0, column=0, sticky=W)
+        self.metricas_1 = Metricas(equipe1, 0, 0, 0)
+        self.centroide1 = self.canvas.create_oval(0, 0, 10, 10, fill=cores[2])
 
-        self.label_comprimento_valor = Label(self.frame2, text=self.metricas.comprimento)
-        self.label_comprimento_valor.grid(row=0, column=1, sticky=W)
+        self.metricas_2 = Metricas(equipe2, 0, 0, 0)
+        self.centroide2 = self.canvas.create_oval(0, 0, 10, 10, fill=cores[2])
 
-        self.label_largura = Label(self.frame2, text="largura: ")
-        self.label_largura.grid(row=1, column=0, sticky=W)
+        self.label_comprimento_valor_1 = None
+        self.label_largura_valor_1 = None
+        self.label_LPW_valor_1 = None
 
-        self.label_largura_valor = Label(self.frame2, text=self.metricas.largura)
-        self.label_largura_valor.grid(row=1, column=1, sticky=W)
+        self.label_comprimento_valor_2 = None
+        self.label_largura_valor_2 = None
+        self.label_LPW_valor_2 = None
 
-        self.label_LPW = Label(self.frame2, text="LpW: ")
-        self.label_LPW.grid(row=2, column=0, sticky=W)
+    def criar_footer_informacoes(self):
 
-        self.label_LPW_valor = Label(self.frame2, text=self.metricas.LPW)
-        self.label_LPW_valor.grid(row=2, column=1, sticky=W)
+        equipe1 = Label(self.footer1, text="EQUIPE 1")
+        equipe1.grid(row=0, column=0, columnspan=2)
 
-        self.centroide = self.canvas.create_oval(0, 0, 10, 10, fill="pink")
-        self.centroide_x = 0
-        self.centroide_y = 0
+        label_comprimento_1 = Label(self.footer1, text="comprimento: ")
+        label_comprimento_1.grid(row=1, column=0, sticky=W)
+
+        self.label_comprimento_valor_1 = Label(self.footer1, text=self.metricas_1.comprimento)
+        self.label_comprimento_valor_1.grid(row=1, column=1, sticky=W)
+
+        label_largura_1 = Label(self.footer1, text="largura: ")
+        label_largura_1.grid(row=2, column=0, sticky=W)
+
+        self.label_largura_valor_1 = Label(self.footer1, text=self.metricas_1.largura)
+        self.label_largura_valor_1.grid(row=2, column=1, sticky=W)
+
+        label_LPW_1 = Label(self.footer1, text="LpW: ")
+        label_LPW_1.grid(row=3, column=0, sticky=W)
+
+        self.label_LPW_valor_1 = Label(self.footer1, text=self.metricas_1.LPW)
+        self.label_LPW_valor_1.grid(row=3, column=1, sticky=W)
+
+
+        ###==================== EQUIPE 2
+
+        equipe1 = Label(self.footer2, text="EQUIPE 2")
+        equipe1.grid(row=0, column=0, columnspan=2)
+
+        label_comprimento_1 = Label(self.footer2, text="comprimento: ")
+        label_comprimento_1.grid(row=1, column=0, sticky=W)
+
+        self.label_comprimento_valor_2 = Label(self.footer2, text=self.metricas_2.comprimento)
+        self.label_comprimento_valor_2.grid(row=1, column=1, sticky=W)
+
+        label_largura_1 = Label(self.footer2, text="largura: ")
+        label_largura_1.grid(row=2, column=0, sticky=W)
+
+        self.label_largura_valor_2 = Label(self.footer2, text=self.metricas_2.largura)
+        self.label_largura_valor_2.grid(row=2, column=1, sticky=W)
+
+        label_LPW_1 = Label(self.footer2, text="LpW: ")
+        label_LPW_1.grid(row=3, column=0, sticky=W)
+
+        self.label_LPW_valor_2 = Label(self.footer2, text=self.metricas_2.LPW)
+        self.label_LPW_valor_2.grid(row=3, column=1, sticky=W)
 
     def pause(self):
         self.is_paused = True
@@ -119,45 +166,87 @@ class Window:
 
         self.tela.mainloop()
 
-    def conectar_jogadores(self):
-        # Obtém as coordenadas atuais dos círculos
-        x1, y1, x2, y2 = self.canvas.coords(self.jogadores[0].jogador)
-        #print(x1, y1, x2, y2)
+    def dividir_em_equipe(self):
+        equipe1 = []
+        equipe2 = []
+
+        for i in range(len(self.jogadores)):
+            if (self.jogadores[i].equipe == 1):
+                equipe1.append(self.jogadores[i])
+            else:
+                equipe2.append(self.jogadores[i])
+        return equipe1,equipe2
+
+    def conectar_jogadores(self, equipe1,equipe2):
 
         # Apaga as linhas antigas
         self.canvas.delete("line")
 
-        # Cria as novas linhas entre os círculos
-        for i in range(len(self.jogadores) - 1):
-            x1, y1, x2, y2 = self.canvas.coords(self.jogadores[i].jogador)
-            x3, y3, x4, y4 = self.canvas.coords(self.jogadores[i + 1].jogador)
+        # Cria as novas linhas entre as equipe 1
+        for i in range(len(equipe1) - 1):
+            x1, y1, x2, y2 = self.canvas.coords(equipe1[i].jogador)
+            x3, y3, x4, y4 = self.canvas.coords(equipe1[i + 1].jogador)
             line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
                                       x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
         # Cria a última linha que liga o último círculo ao primeiro
-        x1, y1, x2, y2 = self.canvas.coords(self.jogadores[-1].jogador)
-        x3, y3, x4, y4 = self.canvas.coords(self.jogadores[0].jogador)
+        x1, y1, x2, y2 = self.canvas.coords(equipe1[-1].jogador)
+        x3, y3, x4, y4 = self.canvas.coords(equipe1[0].jogador)
         line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
                                   x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line",fill='red')
 
-    def verificar_centroide(self):
+        # Cria as novas linhas entre a equipe 2
+        for i in range(len(equipe2) - 1):
+            x1, y1, x2, y2 = self.canvas.coords(equipe2[i].jogador)
+            x3, y3, x4, y4 = self.canvas.coords(equipe2[i + 1].jogador)
+            line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
+                                           x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line", fill='red')
+        # Cria a última linha que liga o último círculo ao primeiro
+        x1, y1, x2, y2 = self.canvas.coords(equipe2[-1].jogador)
+        x3, y3, x4, y4 = self.canvas.coords(equipe2[0].jogador)
+        line = self.canvas.create_line(x1 + (x2 - x1) // 2, y1 + (y2 - y1) // 2,
+                                       x3 + (x4 - x3) // 2, y3 + (y4 - y3) // 2, tags="line", fill='red')
+
+    def verificar_centroide(self, equipe1,equipe2):
+        #========= centroide EQUIPE 1
         media_x=[]
-        for i in range(0, len(self.jogadores)):
-            media_x.append(self.jogadores[i].x_org)
+        for i in range(0, len(equipe1)):
+            media_x.append(equipe1[i].x_org)
 
         media_y = []
-        for i in range(0, len(self.jogadores)):
-            media_y.append(self.jogadores[i].y_org)
+        for i in range(0, len(equipe1)):
+            media_y.append(equipe1[i].y_org)
 
-        self.centroide_x = np.mean(media_x)
-        self.centroide_y = np.mean(media_y)
+        centroide_x = np.mean(media_x)
+        centroide_y = np.mean(media_y)
 
         # Atualiza a posição do objeto oval
-        self.canvas.coords(self.centroide, self.centroide_x, self.centroide_y, self.centroide_x + 10,self.centroide_y + 10);
+        self.canvas.coords(self.centroide1, centroide_x, centroide_y, centroide_x + 10, centroide_y + 10);
+
+        # ========= centroide EQUIPE 2
+        media_x = []
+        for i in range(0, len(equipe2)):
+            media_x.append(equipe2[i].x_org)
+
+        media_y = []
+        for i in range(0, len(equipe2)):
+            media_y.append(equipe2[i].y_org)
+
+        centroide_x = np.mean(media_x)
+        centroide_y = np.mean(media_y)
+
+        # Atualiza a posição do objeto oval
+        self.canvas.coords(self.centroide2, centroide_x, centroide_y, centroide_x + 10, centroide_y + 10);
 
     def att_labels(self):
-        self.label_comprimento_valor.configure(text=self.metricas.comprimento)
-        self.label_largura_valor.configure(text=self.metricas.largura)
-        self.label_LPW_valor.configure(text=self.metricas.LPW)
+        self.label_comprimento_valor_1.configure(text=self.metricas_1.comprimento)
+        self.label_largura_valor_1.configure(text=self.metricas_1.largura)
+        texto_formatado = "{:.2f}".format(self.metricas_1.LPW)
+        self.label_LPW_valor_1.configure(text=texto_formatado)
+
+        self.label_comprimento_valor_2.configure(text=self.metricas_2.comprimento)
+        self.label_largura_valor_2.configure(text=self.metricas_2.largura)
+        texto_formatado = "{:.2f}".format(self.metricas_2.LPW)
+        self.label_LPW_valor_2.configure(text=texto_formatado)
 
     def inicializarJogadoresNoMiniMapa(self):
         print("Inicializando os Jogados em Campo!")
@@ -171,13 +260,21 @@ class Window:
 
             self.canvas.move(self.jogadores[n].jogador, self.jogadores[n].x, self.jogadores[n].y);
             self.canvas.move(self.jogadores[n].jogador, 0, 0);
-            self.canvas.coords(self.centroide, self.centroide_x,self.centroide_y, self.centroide_x+10,self.centroide_y+10);
+            self.canvas.coords(self.centroide1, 0, 0, 0 + 10, 0 + 10);
+            self.canvas.coords(self.centroide2, 0, 0, 0 + 10, 0 + 10);
 
-        self.conectar_jogadores()
-        self.metricas.verificar_comprimento()
-        self.metricas.verificar_largura()
-        self.metricas.att_lpw()
-        self.verificar_centroide()
+        self.metricas_1.jogadores,self.metricas_2.jogadores = self.dividir_em_equipe()
+        self.conectar_jogadores(self.metricas_1.jogadores,self.metricas_2.jogadores)
+        self.verificar_centroide(self.metricas_1.jogadores,self.metricas_2.jogadores)
+
+        self.metricas_1.verificar_comprimento()
+        self.metricas_1.verificar_largura()
+        self.metricas_1.att_lpw()
+
+        self.metricas_2.verificar_comprimento()
+        self.metricas_2.verificar_largura()
+        self.metricas_2.att_lpw()
+
         self.att_labels()
 
 
@@ -288,20 +385,26 @@ class Window:
                 if (self.jogadores[n].breakCont == 1 and self.jogadores[n].status == 0):
                     print("estorou tamanho")
                     self.canvas.move(self.jogadores[n].jogador, 0, 0)
-                    self.metricas.get_comprimento_media()
-                    self.metricas.get_largura_media()
-                    self.metricas.get_lpw_media()
+                    self.metricas_1.relatorio_metricas()
+                    self.metricas_2.relatorio_metricas()
                     break
 
                 else:
                     if( n == len(self.jogadores)-1 ):
                         self.frame1.after(5, self.atualiza_posicao_bola)  # agenda pra daqui a pouco
 
-            self.conectar_jogadores()
-            self.metricas.verificar_comprimento()
-            self.metricas.verificar_largura()
-            self.metricas.att_lpw()
-            self.verificar_centroide()
+            self.metricas_1.jogadores, self.metricas_2.jogadores = self.dividir_em_equipe()
+            self.conectar_jogadores(self.metricas_1.jogadores, self.metricas_2.jogadores)
+            self.verificar_centroide(self.metricas_1.jogadores, self.metricas_2.jogadores)
+
+            self.metricas_1.verificar_comprimento()
+            self.metricas_1.verificar_largura()
+            self.metricas_1.att_lpw()
+
+            self.metricas_2.verificar_comprimento()
+            self.metricas_2.verificar_largura()
+            self.metricas_2.att_lpw()
+
             self.att_labels()
 
 def achandoValoresXeY(jogadores,BD):
@@ -336,25 +439,7 @@ def achandoValoresXeY(jogadores,BD):
         # print("===================================")
 
 frame1 = Window()
+frame1.criar_footer_informacoes()
 achandoValoresXeY(frame1.jogadores,bancosDados)
 frame1.inicializarJogadoresNoMiniMapa()
 frame1.inicializarLoop()
-
-# def atualizarValoresY():
-#     for n in range(0, len(tela.jogadores[id].y_values)):
-#         tela.jogadores[id].y_values[n] = y_campo - tela.jogadores[id].y_values[n]
-#
-# # atualizarValoresY()
-#
-#
-# def miniMapa():
-#
-#
-#     canvas.move(jogadores[0].jogador, jogadores[0].x, jogadores[0].y);canvas.move(jogadores[0].jogador, 0, 0);
-#     tela.after(0, atualiza_posicao_bola)  # agendamento inicial
-#
-#     sair = Button(tela, text='Sair', bg='red', command=tela.destroy)
-#     sair.pack()
-#     tela.mainloop()
-#
-# miniMapa()

@@ -81,3 +81,6 @@ class Metricas:
     def get_centroide_media(self):
         media = np.mean(self.centroide_vetor)
         print("centroide media: ",media)
+
+    def relatorio_metricas(self):
+        print("Largura: ", self.get_largura_media(), " | Comprimento: ", self.get_comprimento_media(), " | LpW: ", self.get_lpw_media(), " | Centroide: ", self.get_centroide_media())
