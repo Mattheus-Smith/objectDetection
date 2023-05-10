@@ -8,22 +8,29 @@ class Metricas:
         self.largura = largura
         self.LPW = LPW
         self.team_Separateness = team_Separateness
+        self.SEI = 0
+        self.stretch_index = 0
 
         self.comprimento_vetor = []
         self.largura_vetor = []
         self.LPW_vetor = []
         self.team_Separateness_vetor = []
+        self.SEI_vetor = []
+        self.stretch_index_vetor = []
+
         self.centroide_vetor = []
+
         self.qte_mov_jogadores_vetor = []
         self.media_jogadores_x_vetor = []
         self.media_jogadores_y_vetor = []
 
     def att_info_IES(self):
-        for n in range(0, len(self.jogadores)):
-            self.qte_mov_jogador_vetor.append(self.jogadores[n].x_values)
 
-            self.media_jogadores_x_vetor.append(self.jogadores[n].x_values)
-            self.media_jogadores_y_vetor.append(self.jogadores[n].x_values)
+        for n in range(0, len(self.jogadores)):
+            self.qte_mov_jogadores_vetor.append(self.jogadores[n].x_values)
+
+            self.media_jogadores_x_vetor.append(np.mean(self.jogadores[n].x_values))
+            self.media_jogadores_y_vetor.append(np.mean(self.jogadores[n].y_values))
 
     def verificar_largura(self):
         # verificar X mais a esquerda(MAIOR X)
@@ -77,6 +84,13 @@ class Metricas:
             total_dist+=distancia
         self.team_Separateness = total_dist
         self.team_Separateness_vetor.append(total_dist)
+
+    def verificar_SEI(self):
+        for i in range(0, len(self.jogadores)):
+            self.SEI = np.sqrt(pow(self.jogadores[i].x_org - self.media_jogadores_x_vetor[i], 2) + pow(self.jogadores[i].y_org - self.media_jogadores_y_vetor[i], 2))
+
+        for i in range(0, len(self.jogadores)):
+            self.SEI = np.sqrt(pow(self.jogadores[i].x_org - self.media_jogadores_x_vetor[i], 2) + pow(self.jogadores[i].y_org - self.media_jogadores_y_vetor[i], 2))
 
     def get_largura_media(self):
         media = np.mean(self.largura_vetor)

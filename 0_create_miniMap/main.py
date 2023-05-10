@@ -105,7 +105,7 @@ class Window:
         ###==================== EQUIPE 1
 
         equipe1 = Label(self.footer1, text="EQUIPE 1", fg="blue")
-        equipe1.grid(row=0, column=0, columnspan=2)
+        equipe1.grid(row=0, column=0, columnspan=6)
 
         label_comprimento_1 = Label(self.footer1, text="comprimento: ")
         label_comprimento_1.grid(row=1, column=0, sticky=W)
@@ -114,28 +114,44 @@ class Window:
         self.label_comprimento_valor_1.grid(row=1, column=1, sticky=W)
 
         label_largura_1 = Label(self.footer1, text="largura: ")
-        label_largura_1.grid(row=2, column=0, sticky=W)
+        label_largura_1.grid(row=1, column=2, sticky=W)
 
         self.label_largura_valor_1 = Label(self.footer1, text=self.metricas_1.largura)
-        self.label_largura_valor_1.grid(row=2, column=1, sticky=W)
+        self.label_largura_valor_1.grid(row=1, column=3, sticky=W)
+
+        #================= arrumar aq  v
+        label_SEI_1 = Label(self.footer1, text="S.E.I.: ")
+        label_SEI_1.grid(row=1, column=4, sticky=W)
+
+        label_SEI_valor_1 = Label(self.footer1, text=50)
+        label_SEI_valor_1.grid(row=1, column=5, sticky=W)
+        # ================= arrumar aq ^
 
         label_LPW_1 = Label(self.footer1, text="LpW: ")
-        label_LPW_1.grid(row=3, column=0, sticky=W)
+        label_LPW_1.grid(row=2, column=0, sticky=W)
 
         self.label_LPW_valor_1 = Label(self.footer1, text=self.metricas_1.LPW)
-        self.label_LPW_valor_1.grid(row=3, column=1, sticky=W)
+        self.label_LPW_valor_1.grid(row=2, column=1, sticky=W)
 
         label_team_Separateness_1 = Label(self.footer1, text="Team's Separateness: ")
-        label_team_Separateness_1.grid(row=4, column=0, sticky=W)
+        label_team_Separateness_1.grid(row=2, column=2, sticky=W)
 
         self.label_team_Separateness_1 = Label(self.footer1, text=self.metricas_1.team_Separateness)
-        self.label_team_Separateness_1.grid(row=4, column=1, sticky=W)
+        self.label_team_Separateness_1.grid(row=2, column=3, sticky=W)
+
+        # ================= arrumar aq  v
+        label_Stretch_index_1 = Label(self.footer1, text="Stretch Index.: ")
+        label_Stretch_index_1.grid(row=2, column=4, sticky=W)
+
+        label_Stretch_index_valor_1 = Label(self.footer1, text=150)
+        label_Stretch_index_valor_1.grid(row=2, column=5, sticky=W)
+        # ================= arrumar aq ^
 
 
         ###==================== EQUIPE 2
 
         equipe1 = Label(self.footer2, text="EQUIPE 2", fg="red")
-        equipe1.grid(row=0, column=0, columnspan=2)
+        equipe1.grid(row=0, column=0, columnspan=6)
 
         label_comprimento_1 = Label(self.footer2, text="comprimento: ")
         label_comprimento_1.grid(row=1, column=0, sticky=W)
@@ -144,22 +160,38 @@ class Window:
         self.label_comprimento_valor_2.grid(row=1, column=1, sticky=W)
 
         label_largura_1 = Label(self.footer2, text="largura: ")
-        label_largura_1.grid(row=2, column=0, sticky=W)
+        label_largura_1.grid(row=1, column=2, sticky=W)
 
         self.label_largura_valor_2 = Label(self.footer2, text=self.metricas_2.largura)
-        self.label_largura_valor_2.grid(row=2, column=1, sticky=W)
+        self.label_largura_valor_2.grid(row=1, column=3, sticky=W)
+
+        # ================= arrumar aq  v
+        label_SEI_2 = Label(self.footer2, text="S.E.I.: ")
+        label_SEI_2.grid(row=1, column=4, sticky=W)
+
+        label_SEI_valor_2 = Label(self.footer2, text=50)
+        label_SEI_valor_2.grid(row=1, column=5, sticky=W)
+        # ================= arrumar aq ^
 
         label_LPW_1 = Label(self.footer2, text="LpW: ")
-        label_LPW_1.grid(row=3, column=0, sticky=W)
+        label_LPW_1.grid(row=2, column=0, sticky=W)
 
         self.label_LPW_valor_2 = Label(self.footer2, text=self.metricas_2.LPW)
-        self.label_LPW_valor_2.grid(row=3, column=1, sticky=W)
+        self.label_LPW_valor_2.grid(row=2, column=1, sticky=W)
 
         label_team_Separateness_2 = Label(self.footer2, text="Team's Separateness: ")
-        label_team_Separateness_2.grid(row=4, column=0, sticky=W)
+        label_team_Separateness_2.grid(row=2, column=2, sticky=W)
 
         self.label_team_Separateness_2 = Label(self.footer2, text=self.metricas_2.team_Separateness)
-        self.label_team_Separateness_2.grid(row=4, column=1, sticky=W)
+        self.label_team_Separateness_2.grid(row=2, column=3, sticky=W)
+
+        # ================= arrumar aq  v
+        label_Stretch_index_2 = Label(self.footer2, text="Stretch Index.: ")
+        label_Stretch_index_2.grid(row=2, column=4, sticky=W)
+
+        label_Stretch_index_valor_2 = Label(self.footer2, text=150)
+        label_Stretch_index_valor_2.grid(row=2, column=5, sticky=W)
+        # ================= arrumar aq ^
 
     def pause(self):
         self.is_paused = True
@@ -316,6 +348,8 @@ class Window:
             self.canvas.coords(self.centroide2, 0, 0, 0 + 10, 0 + 10);
 
         self.metricas_1.jogadores,self.metricas_2.jogadores = self.dividir_em_equipe()
+        self.metricas_1.att_info_IES()
+        self.metricas_2.att_info_IES()
         self.conectar_jogadores(self.metricas_1.jogadores,self.metricas_2.jogadores)
         self.verificar_centroide(self.metricas_1.jogadores,self.metricas_2.jogadores)
 
