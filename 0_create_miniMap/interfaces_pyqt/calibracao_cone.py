@@ -9,19 +9,50 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+#from main import Ui_MainWindow
 
+class Ui_ConeWindow(object):
 
-class Ui_MainWindow(object):
-
-    def button_search(self, line_edit):
+    def button_search(self, cone):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*);;Python Files(*.py)")
 
         if fileName:
-            line_edit.setText(fileName)
+            if cone == 1:
+                self.informacoes.cone1 = fileName
+                print(self.informacoes.cone1)
+            elif cone == 2:
+                self.informacoes.cone2 = fileName
+            elif cone == 3:
+                self.informacoes.cone3 = fileName
+            elif cone == 4:
+                self.informacoes.cone4 = fileName
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(858, 351)
+    def back_page(self):
+        a=1
+        # self.MainWindow = QtWidgets.QMainWindow()
+        # self.ui = Ui_MainWindow()
+        # self.ui.setupUi(self.MainWindow, self.informacoes)
+        # self.MainWindow.show()
+
+    def next_page(self):
+
+        print("enviar as seguintes informações para a interface")
+        print("cone1: ",self.informacoes.cone1)
+        #print("cone2: ",self.informacoes.cone2)
+        #print("cone3: ",self.informacoes.cone3)
+        #print("cone4: ",self.informacoes.cone4)
+
+        print("opcao_gps: ", self.informacoes.opcao_gps)
+
+        print(self.informacoes.equipe2)
+
+
+    def setupUi(self, MainWindow, info):
+
+        self.informacoes = info
+        self.setWindowTitle("Calibracao dos Cones")
+        MainWindow.setObjectName("Calibracao dos Cones")
+        MainWindow.resize(858, 486)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.opcao1 = QtWidgets.QLabel(self.centralwidget)
@@ -29,70 +60,95 @@ class Ui_MainWindow(object):
         self.opcao1.setAlignment(QtCore.Qt.AlignCenter)
         self.opcao1.setObjectName("opcao1")
         self.pg1_prox = QtWidgets.QPushButton(self.centralwidget)
-        self.pg1_prox.setGeometry(QtCore.QRect(470, 260, 121, 41))
+        self.pg1_prox.setGeometry(QtCore.QRect(470, 390, 121, 41))
         self.pg1_prox.setObjectName("pg1_prox")
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(120, 80, 641, 143))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.cone1 = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.cone1.setObjectName("cone1")
-        self.horizontalLayout.addWidget(self.cone1)
-        self.bt_cone1 = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        self.bt_cone1.setObjectName("bt_cone1")
-        self.horizontalLayout.addWidget(self.bt_cone1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_2 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_2.addWidget(self.label_2)
-        self.cone2 = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.cone2.setObjectName("cone2")
-        self.horizontalLayout_2.addWidget(self.cone2)
-        self.bt_cone2 = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        self.bt_cone2.setObjectName("bt_cone2")
-        self.horizontalLayout_2.addWidget(self.bt_cone2)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_3.addWidget(self.label_3)
-        self.cone3 = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.cone3.setObjectName("cone3")
-        self.horizontalLayout_3.addWidget(self.cone3)
-        self.bt_cone3 = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        self.bt_cone3.setObjectName("bt_cone3")
-        self.horizontalLayout_3.addWidget(self.bt_cone3)
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_4 = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.label_4.setObjectName("label_4")
-        self.horizontalLayout_4.addWidget(self.label_4)
-        self.cone4 = QtWidgets.QLineEdit(self.verticalLayoutWidget)
-        self.cone4.setObjectName("cone4")
-        self.horizontalLayout_4.addWidget(self.cone4)
-        self.bt_cone4 = QtWidgets.QPushButton(self.verticalLayoutWidget)
-        self.bt_cone4.setObjectName("bt_cone4")
-        self.horizontalLayout_4.addWidget(self.bt_cone4)
-        self.verticalLayout.addLayout(self.horizontalLayout_4)
-        self.pg1_prox_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pg1_prox_2.setGeometry(QtCore.QRect(290, 260, 121, 41))
-        self.pg1_prox_2.setObjectName("pg1_prox_2")
+        self.pg1_voltar = QtWidgets.QPushButton(self.centralwidget)
+        self.pg1_voltar.setGeometry(QtCore.QRect(290, 390, 121, 41))
+        self.pg1_voltar.setObjectName("pg1_voltar")
+        self.pg1_prox.clicked.connect(self.next_page)
 
-        self.bt_cone1.clicked.connect(lambda: self.button_search(self.cone1))
-        self.bt_cone2.clicked.connect(lambda: self.button_search(self.cone2))
-        self.bt_cone3.clicked.connect(lambda: self.button_search(self.cone3))
-        self.bt_cone4.clicked.connect(lambda: self.button_search(self.cone4))
+        self.bt_cone4 = QtWidgets.QPushButton(self.centralwidget)
+        self.bt_cone4.setGeometry(QtCore.QRect(650, 330, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.bt_cone4.setFont(font)
+        self.bt_cone4.setStyleSheet("QPushButton{\n"
+"    border-radius: 25px;\n"
+"    background-color: rgb(255,165,0);\n"
+"    color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background: rgb(252, 183, 115);\n"
+"}\n"
+"")
+        self.bt_cone4.setObjectName("bt_cone4")
+        self.bt_cone3 = QtWidgets.QPushButton(self.centralwidget)
+        self.bt_cone3.setGeometry(QtCore.QRect(130, 330, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.bt_cone3.setFont(font)
+        self.bt_cone3.setStyleSheet("QPushButton{\n"
+"    border-radius: 25px;\n"
+"    background-color: rgb(255,165,0);\n"
+"    color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background: rgb(252, 183, 115);\n"
+"}\n"
+"")
+        self.bt_cone3.setObjectName("bt_cone3")
+        self.bt_cone2 = QtWidgets.QPushButton(self.centralwidget)
+        self.bt_cone2.setGeometry(QtCore.QRect(650, 60, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.bt_cone2.setFont(font)
+        self.bt_cone2.setStyleSheet("QPushButton{\n"
+"    border-radius: 25px;\n"
+"    background-color: rgb(255,165,0);\n"
+"    color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background: rgb(252, 183, 115);\n"
+"}\n"
+"")
+        self.bt_cone2.setObjectName("bt_cone2")
+        self.bt_cone1 = QtWidgets.QPushButton(self.centralwidget)
+        self.bt_cone1.setGeometry(QtCore.QRect(130, 60, 81, 51))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.bt_cone1.setFont(font)
+        self.bt_cone1.setStyleSheet("QPushButton{\n"
+"    border-radius: 25px;\n"
+"    background-color: rgb(255,165,0);\n"
+"    color: rgb(0,0,0);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background: rgb(252, 183, 115);\n"
+"}\n"
+"")
+        self.bt_cone1.setObjectName("bt_cone1")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(160, 80, 551, 281))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap(".\\../campo_futebol_menor.png"))
+        self.label.setObjectName("label")
+        self.opcao1.raise_()
+        self.pg1_prox.raise_()
+        self.pg1_voltar.raise_()
+        self.label.raise_()
+        self.bt_cone2.raise_()
+        self.bt_cone1.raise_()
+        self.bt_cone4.raise_()
+        self.bt_cone3.raise_()
+
+        self.bt_cone1.clicked.connect(lambda: self.button_search(1))
+        self.bt_cone2.clicked.connect(lambda: self.button_search(2))
+        self.bt_cone3.clicked.connect(lambda: self.button_search(3))
+        self.bt_cone4.clicked.connect(lambda: self.button_search(4))
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -102,24 +158,21 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.opcao1.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">3. Opção de registro</span></p></body></html>"))
+        self.opcao1.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:12pt; font-weight:600;\">3. Calibração dos cones</span></p></body></html>"))
         self.pg1_prox.setText(_translate("MainWindow", "Próximo ->"))
-        self.label.setText(_translate("MainWindow", "jogador 1:"))
-        self.bt_cone1.setText(_translate("MainWindow", "pesquisar"))
-        self.label_2.setText(_translate("MainWindow", "jogador 2:"))
-        self.bt_cone2.setText(_translate("MainWindow", "pesquisar"))
-        self.label_3.setText(_translate("MainWindow", "jogador 3:"))
-        self.bt_cone3.setText(_translate("MainWindow", "pesquisar"))
-        self.label_4.setText(_translate("MainWindow", "jogador 4:"))
-        self.bt_cone4.setText(_translate("MainWindow", "pesquisar"))
-        self.pg1_prox_2.setText(_translate("MainWindow", "<- Voltar"))
+        self.pg1_voltar.setText(_translate("MainWindow", "<- Voltar"))
+        self.bt_cone4.setText(_translate("MainWindow", "Cone 4"))
+        self.bt_cone3.setText(_translate("MainWindow", "Cone 3"))
+        self.bt_cone2.setText(_translate("MainWindow", "Cone 2"))
+        self.bt_cone1.setText(_translate("MainWindow", "Cone 1"))
 
-
+"""
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    ui = Ui_ConeWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+"""

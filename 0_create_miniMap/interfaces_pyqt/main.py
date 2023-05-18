@@ -9,9 +9,41 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Informacoes import *
+from Verificacao_erros import *
+from calibracao_cone import Ui_ConeWindow
 import sys
 
 class Ui_MainWindow(object):
+
+    def preencher_info_window(self, num_opc):
+        opc = [self.check_gps,self.check_camera, self.check_gps_camera]
+        equpe1=[self.eq1_jg1, self.eq1_jg2, self.eq1_jg3, self.eq1_jg4]
+        equpe2 = [self.eq2_jg1, self.eq2_jg2, self.eq2_jg3, self.eq2_jg4]
+
+        #preenchendo Opções
+        opc[num_opc].isChecked()
+
+        # preenchendo Equipe 1
+        cont = 0
+        while(cont >= 0):
+            if(self.informacoes.equipe1[cont] != ""):
+                equpe1[cont].setText(self.informacoes.equipe1[cont])
+                cont+=1
+            else:
+                cont = -1
+
+        # preenchendo Equipe 2
+        cont = 0
+        while (cont >= 0):
+            if (self.informacoes.equipe2[cont] != ""):
+                equpe2[cont].setText(self.informacoes.equipe2[cont])
+                cont += 1
+            else:
+                cont = -1
+
+
+
 
     def button_search(self, line_edit):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*);;Python Files(*.py)")
@@ -21,23 +53,40 @@ class Ui_MainWindow(object):
 
     def next_page(self):
 
-        opcao = self.check_gps.isChecked()
+        self.informacoes.opcao_gps = self.check_gps.isChecked()
+        self.informacoes.opcao_camera = self.check_camera.isChecked()
+        self.informacoes.opcao_gps_camera = self.check_gps_camera.isChecked()
 
-        equipe1 = [self.eq1_jg1.text(), self.eq1_jg2.text(), self.eq1_jg3.text(), self.eq1_jg4.text()]
-        equipe2 = [self.eq2_jg1.text(), self.eq2_jg2.text(), self.eq2_jg3.text(), self.eq2_jg4.text()]
+        self.informacoes.equipe1 = [self.eq1_jg1.text(), self.eq1_jg2.text(), self.eq1_jg3.text(), self.eq1_jg4.text()]
+        self.informacoes.equipe2 = [self.eq2_jg1.text(), self.eq2_jg2.text(), self.eq2_jg3.text(), self.eq2_jg4.text()]
 
+        if not( erro_qtde_jgs(self.informacoes) or erro_qtde_opcoes(self.informacoes) ):
+            if (self.informacoes.opcao_gps):
 
-        if (opcao):
+                self.MainWindow = QtWidgets.QMainWindow()
+                self.ui = Ui_ConeWindow()
+                self.ui.setupUi(MainWindow, self.informacoes)
+                self.MainWindow.show()
+                #sys.exit(app.exec_())
 
-            app = QtWidgets.QApplication(sys.argv)
-            MainWindow = QtWidgets.QMainWindow()
-            ui = Ui_MainWindow()
-            ui.setupUi(MainWindow)
-            MainWindow.show()
-            sys.exit(app.exec_())
+            elif (self.informacoes.opcao_camera):
 
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+                self.MainWindow = QtWidgets.QMainWindow()
+                self.ui = Ui_ConeWindow()
+                self.ui.setupUi(MainWindow, self.informacoes)
+                self.MainWindow.show()
+
+            elif (self.informacoes.opcao_gps_camera):
+
+                self.MainWindow = QtWidgets.QMainWindow()
+                self.ui = Ui_ConeWindow()
+                self.ui.setupUi(MainWindow, self.informacoes)
+                self.MainWindow.show()
+
+    def setupUi(self, MainWindow, info):
+        self.setWindowTitle("Menu")
+        self.informacoes = info
+        MainWindow.setObjectName("Menu")
         MainWindow.resize(858, 549)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -186,7 +235,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.eq2_jg4)
         self.bt_eq2_jg4 = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
         self.bt_eq2_jg4.setObjectName("bt_eq3_jg4")
-        self.bt_eq2_jg1.clicked.connect(lambda: self.button_search(self.eq2_jg4))
+        self.bt_eq2_jg4.clicked.connect(lambda: self.button_search(self.eq2_jg4))
         self.horizontalLayout_8.addWidget(self.bt_eq2_jg4)
         self.verticalLayout_2.addLayout(self.horizontalLayout_8)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -226,7 +275,8 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
+    info = Informacoes()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, info)
     MainWindow.show()
     sys.exit(app.exec_())

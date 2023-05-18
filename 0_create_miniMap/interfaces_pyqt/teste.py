@@ -1,35 +1,47 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QFrame, QWidget, QVBoxLayout
-from PyQt5.QtGui import QWindow
-import tkinter as tk
-from tkinter import Label, Button
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import QPainter, QColor, QPen
+from PyQt5.QtCore import Qt, QPoint
 
-class MainWindow(QMainWindow):
+
+class CircleWidget(QWidget):
     def __init__(self):
-        super(MainWindow, self).__init__()
+        super().__init__()
+        self.setGeometry(100, 100, 400, 400)
+        self.setWindowTitle('Círculos e Linha')
 
-        # Configurar a janela principal
-        self.setGeometry(200, 200, 300, 300)
-        self.setWindowTitle("Integração PyQt e Tkinter")
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
 
-        # Criar um QFrame como contêiner para o widget do Tkinter
-        self.frame = QFrame(self)
-        self.frame.setGeometry(50, 50, 200, 200)
+        # Desenha os círculos
+        pen = QPen(Qt.black)
+        pen.setWidth(2)
+        painter.setPen(pen)
 
-        # Incorporar o widget do Tkinter dentro do QFrame
-        self.embed_tkinter_widget()
+        circle_radius = 25
+        center_x = self.width() / 2
+        center_y = self.height() / 2
 
-    def embed_tkinter_widget(self):
-        # Criar uma janela do Qt para encapsular o widget do Tkinter
-        window = QWindow.fromWinId(tk.Tk().winfo_id())
-        container = QWidget.createWindowContainer(window, self.frame)
+        # Posiciona os círculos como vértices de um triângulo equilátero
+        circle1_center = QPoint(center_x, center_y - 150)
+        circle2_center = QPoint(center_x - 130, center_y + 75)
+        circle3_center = QPoint(center_x + 130, center_y + 75)
 
-        # Adicionar o contêiner à disposição vertical
-        layout = QVBoxLayout(self.frame)
-        layout.addWidget(container)
+        painter.drawEllipse(circle1_center.x() - circle_radius, circle1_center.y() - circle_radius, 2 * circle_radius, 2 * circle_radius)
+        painter.drawEllipse(circle2_center.x() - circle_radius, circle2_center.y() - circle_radius, 2 * circle_radius, 2 * circle_radius)
+        painter.drawEllipse(circle3_center.x() - circle_radius, circle3_center.y() - circle_radius, 2 * circle_radius, 2 * circle_radius)
 
-if __name__ == "__main__":
+        # Desenha as linhas para formar o polígono convexo
+        pen.setWidth(1)
+        painter.setPen(pen)
+        painter.drawLine(circle1_center, circle2_center)
+        painter.drawLine(circle2_center, circle3_center)
+        painter.drawLine(circle3_center, circle1_center)
+
+
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = CircleWidget()
     window.show()
     sys.exit(app.exec_())

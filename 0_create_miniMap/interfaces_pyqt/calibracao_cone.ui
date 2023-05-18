@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>ConeWindow</class>
+ <widget class="QMainWindow" name="ConeWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>351</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;3. Opção de registro&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;3. Calibração dos cones&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -34,7 +34,7 @@
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>260</y>
+      <y>390</y>
       <width>121</width>
       <height>41</height>
      </rect>
@@ -43,107 +43,11 @@
      <string>Próximo -&gt;</string>
     </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>80</y>
-      <width>641</width>
-      <height>143</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>jogador 1:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="cone1"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bt_cone1">
-         <property name="text">
-          <string>pesquisar</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>jogador 2:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="cone2"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bt_cone2">
-         <property name="text">
-          <string>pesquisar</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>jogador 3:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="cone3"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bt_cone3">
-         <property name="text">
-          <string>pesquisar</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_4">
-       <item>
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>jogador 4:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="cone4"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bt_cone4">
-         <property name="text">
-          <string>pesquisar</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="pg1_prox_2">
+   <widget class="QPushButton" name="pg1_voltar">
     <property name="geometry">
      <rect>
       <x>290</x>
-      <y>260</y>
+      <y>390</y>
       <width>121</width>
       <height>41</height>
      </rect>
@@ -152,6 +56,150 @@
      <string>&lt;- Voltar</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="bt_cone4">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>330</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-radius: 25px;
+	background-color: rgb(255,165,0);
+	color: rgb(0,0,0);
+}
+
+QPushButton:hover {
+    background: rgb(252, 183, 115);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Cone 4</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_cone3">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>330</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-radius: 25px;
+	background-color: rgb(255,165,0);
+	color: rgb(0,0,0);
+}
+
+QPushButton:hover {
+    background: rgb(252, 183, 115);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Cone 3</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_cone2">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>60</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-radius: 25px;
+	background-color: rgb(255,165,0);
+	color: rgb(0,0,0);
+}
+
+QPushButton:hover {
+    background: rgb(252, 183, 115);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Cone 2</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bt_cone1">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>60</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+	border-radius: 25px;
+	background-color: rgb(255,165,0);
+	color: rgb(0,0,0);
+}
+
+QPushButton:hover {
+    background: rgb(252, 183, 115);
+}
+</string>
+    </property>
+    <property name="text">
+     <string>Cone 1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>80</y>
+      <width>551</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>../campo_futebol_menor.png</pixmap>
+    </property>
+   </widget>
+   <zorder>opcao1</zorder>
+   <zorder>pg1_prox</zorder>
+   <zorder>pg1_voltar</zorder>
+   <zorder>label</zorder>
+   <zorder>bt_cone2</zorder>
+   <zorder>bt_cone1</zorder>
+   <zorder>bt_cone4</zorder>
+   <zorder>bt_cone3</zorder>
   </widget>
  </widget>
  <resources/>
