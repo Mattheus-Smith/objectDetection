@@ -1,23 +1,34 @@
 import pandas as pd
 import numpy as np
 from tkinter import *
+from pyproj import Proj
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon
 
 from PIL import Image, ImageTk
 
 from Jogador import *
 from Metricas import *
 
-df1 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 1_Wildes_Equipe 1.xlsx")
-df2 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 2_Alvaro_Equipe 1.xlsx")
-df3 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 3_Cristiano_Equipe 1.xlsx")
+# Ler a aba específica "Calibracao" do arquivo Excel
+cone1 = pd.read_excel('./data_3b/GPS 1.xlsx', sheet_name='Calibracao')
+cone2 = pd.read_excel('./data_3b/GPS 2.xlsx', sheet_name='Calibracao')
+cone3 = pd.read_excel('./data_3b/GPS 3.xlsx', sheet_name='Calibracao')
+cone4 = pd.read_excel('./data_3b/GPS 4.xlsx', sheet_name='Calibracao')
+cones = [cone1, cone2, cone3, cone4]
 
-df4 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 4_Alan_Equipe 2.xlsx")
-df5 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 5_Flavio_Equipe 2.xlsx")
-df6 = pd.read_excel("C:\\Users\\Smith Fernandes\\Documents\\4 - github\\1_VisaoComputacional\\yolov3-tf2-darknet\\0_create_miniMap\\data\\GPS 6_Antonio_Equipe 2.xlsx")
+# Ler a aba específica "Suicidio" do arquivo Excel
+jg1 = pd.read_excel('./data_3b/GPS 1.xlsx', sheet_name='Jogo 01')
+jg2 = pd.read_excel('./data_3b/GPS 2.xlsx', sheet_name='Jogo 01')
+jg3 = pd.read_excel('./data_3b/GPS 3.xlsx', sheet_name='Jogo 01')
 
-bancosDados = [df1,df2, df3, df4,df5,df6]
-bancosDados1 = [df1,df2, df3]
-#bancosDados2 = [df4,df5, df6]
+jg5 = pd.read_excel('./data_3b/GPS 5.xlsx', sheet_name='Jogo 01')
+jg6 = pd.read_excel('./data_3b/GPS 6.xlsx', sheet_name='Jogo 01')
+jg7 = pd.read_excel('./data_3b/GPS 7.xlsx', sheet_name='Jogo 01')
+
+bancoDados = [jg1, jg2, jg3, jg5, jg6, jg7]
+bancosDados1 = [jg1, jg2, jg3]
+bancosDados2 = [jg5, jg6, jg7]
 
 
 x_campo = 1010
@@ -76,7 +87,7 @@ class Window:
         self.jogadores = []
         cores = ["blue", "red", "pink"]
 
-        for n in range(0,len(bancosDados)):
+        for n in range(0,6):
             if(n < 3):
                 #(self, canvas, diametro, equipe,color, x_values, y_values, contador, status, posicao_x, posicao_y, breakCont, id , x, y, x_org, y_org):
                 self.jogadores.append(Jogador(self.canvas, 10, 1,cores[0], [], [], 0, 0, 0, 0, 0, n, 0, 0, 0, 0))
@@ -502,31 +513,52 @@ class Window:
 
             self.att_labels()
 
-def achandoValoresXeY(jogadores,BD):
+def achandoValoresXeY(jogadores,BD, cones):
     print("Processando os Dados!")
 
+    # Crie um objeto de projeção usando a Projeção de Mercator
+    proj = Proj('epsg:3857')  # EPSG 3857 representa a Projeção de Mercator
+
+    # Valores de latitude e longitude dos cones
+    lat_cone1 = cones[0].iloc[:, 1].mean(); log_cone1 = cones[0].iloc[:, 2].mean()
+    lat_cone2 = cones[1].iloc[:, 1].mean(); log_cone2 = cones[1].iloc[:, 2].mean()
+    lat_cone3 = cones[2].iloc[:, 1].mean(); log_cone3 = cones[2].iloc[:, 2].mean()
+    lat_cone4 = cones[3].iloc[:, 1].mean(); log_cone4 = cones[3].iloc[:, 2].mean()
+
+    # Converta latitude/longitude em X/Y
+    cone1 = proj(log_cone1, lat_cone1)
+    cone2 = proj(log_cone2, lat_cone2)
+    cone3 = proj(log_cone3, lat_cone3)
+    cone4 = proj(log_cone4, lat_cone4)
+
+    ConesLat = [cone1[0], cone2[0], cone3[0], cone4[0]]
+    ConesLog = [cone1[1], cone2[1], cone3[1], cone4[1]]
+
+    minLat = min(ConesLat); maxLat = max(ConesLat); dfiLat = maxLat-minLat
+
+    minLog = min(ConesLog); maxLog = max(ConesLog); dfiLog = maxLog - minLog
+
+    print(minLat, maxLat)
+    print(minLog, maxLog)
+
     for k in range(0, len(BD)):
-        # _, maxLat, maxLog, _, _, _ = BD[k].max()
-        # _, minLat, minLog, _, _, _ = BD[k].min()
-
-        _, maxLat, maxLog, _,_,_,_,_,_,_,_,_ = BD[k].max()
-        _, minLat, minLog, _,_,_,_,_,_,_,_,_= BD[k].min()
-
-        dfiLat = maxLat - minLat
-        dfiLog = maxLog - minLog
-
-        if(k==0):
-            print("maior lat, menor lat: ", maxLat, minLat)
-            print("maior Log, menor Log: ", maxLog, minLog)
-            print("max - ",maxLat,maxLog)
-            print("min - ",minLat,minLog)
-
-        # print("max - ",maxLat,maxLog)
-        # print("min - ",minLat,minLog)
 
         for n in range(0, len(BD[k])):
-            jogadores[k].x_values.append(((BD[k].get(BD[k].columns[1])[n] - minLat) / dfiLat) * x_campo)
-            jogadores[k].y_values.append(((BD[k].get(BD[k].columns[2])[n] - minLog) / dfiLog) * y_campo)
+
+            lat, log = BD[k].get(BD[k].columns[1])[n], BD[k].get(BD[k].columns[2])[n]
+            x, y = proj(log, lat)
+
+            jogadores[k].x_values.append((( x - minLat) / dfiLat) * x_campo)
+            jogadores[k].y_values.append((( y - minLog) / dfiLog) * y_campo)
+
+            if( k==0 and n==0):
+
+                # print(BD[k].get(BD[k].columns[1])[n])
+                # print(minLat)
+                # print(dfiLat)
+                print(lat, log)
+                print(x, y)
+                print(((x - minLat) / dfiLat) * x_campo)
 
         # print(df)
         # print(x_values)
@@ -535,6 +567,10 @@ def achandoValoresXeY(jogadores,BD):
 
 frame1 = Window()
 frame1.criar_footer_informacoes()
-achandoValoresXeY(frame1.jogadores,bancosDados)
+achandoValoresXeY(frame1.jogadores,bancoDados, cones)
 frame1.inicializarJogadoresNoMiniMapa()
 frame1.inicializarLoop()
+
+#print(cones[0].iloc[:, 1])
+#print(cones[0].head())
+
